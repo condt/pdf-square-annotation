@@ -1,0 +1,22 @@
+{
+    "name": "pdf-square-annotation",
+    "version": "1.0.0",
+    "description": "PDF.js wrapper",
+    "main": "index.js",
+    "scripts": {
+        "build": "rm -r ./dist && tsc",
+        "watch": "tsc --watch",
+        "fmt": "npx prettier --write .",
+        "lint": "eslint --ext .tsx,.ts ."
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^24.3.0",
+        "@typescript-eslint/eslint-plugin": "^8.41.0",
+        "eslint": "^8.57.1",
+        "prettier": "^3.6.2",
+        "typescript": "^5.9.2"
+    }
+}

@@ -1,0 +1,7 @@
+/node_modules
+/dist
+/pdfjs
+
+package-lock.json
+
+*.md

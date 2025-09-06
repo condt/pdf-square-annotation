@@ -1,0 +1,31 @@
+#button-container {
+    display: flex;
+    flex-direction: row;
+}
+#button1 {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+#button2 {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.button:hover {
+    cursor: pointer;
+}
+.button {
+    width: 100px;
+    font-size: 15px;
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    padding-bottom: 7px;
+    color: #777;
+    background-color: #eee;
+}
+.selected {
+    font-weight: bold;
+    color: #fff;
+    background-color: #27b4f5;
+}
