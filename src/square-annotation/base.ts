@@ -2,6 +2,7 @@ import { Context } from "../utils/context.js";
 import { log } from "../utils/log.js";
 import { EditStateManager } from "./edit-state-manager.js";
 import { COURSOR_STYLE } from "./style/settings.js";
+import { changeSelected } from "./style/toolbar.js";
 
 import type { Mode, SquareData, SquareProps, UndoStackTask } from "./types/square.js";
 
@@ -57,6 +58,9 @@ export abstract class SquareAnnotationBase {
             log.error(err);
             log.error("restore mode: ", currentMode);
         }
+
+        // change toolbar button style
+        changeSelected(this.mode);
     }
 
     setPreviewMode() {
@@ -77,6 +81,9 @@ export abstract class SquareAnnotationBase {
             log.error(err);
             log.error("restore mode: ", currentMode);
         }
+
+        // change toolbar button style
+        changeSelected(this.mode);
     }
 
     renderAllPages() {

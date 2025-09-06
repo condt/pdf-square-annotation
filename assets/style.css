@@ -16,7 +16,10 @@
     -khtml-user-select: none; /* webkit (konqueror) browsers */
     -ms-user-select: none; /* IE10+ */
 }
-.toolbar-button.selected {
+#preview-button.selected {
+    background-color: #f57842 !important;
+}
+#edit-square-button.selected {
     background-color: #27a3f5 !important;
 }
 .toolbar-button {
