@@ -1,0 +1,33 @@
+.toolbar {
+    width: 100%;
+    height: 36px;
+    padding: 10px;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(56, 56, 61);
+
+    /* disable double click selection, see https://stackoverflow.com/questions/880512/prevent-text-selection-after-double-click */
+    user-select: none; /* standard syntax */
+    -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+    -moz-user-select: none; /* mozilla browsers */
+    -khtml-user-select: none; /* webkit (konqueror) browsers */
+    -ms-user-select: none; /* IE10+ */
+}
+.toolbar-button.selected {
+    background-color: #27a3f5 !important;
+}
+.toolbar-button {
+    height: 24px;
+    margin-left: 5px;
+}
+/* 最初のボタン */
+.toolbar-button:first-child {
+    margin-left: 0px;
+}
+.toolbar-button:hover {
+    cursor: pointer;
+    background-color: rgb(100, 100, 100);
+}

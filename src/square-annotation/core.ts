@@ -139,6 +139,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
         deleteIcon.style.width = "20px";
         deleteIcon.style.height = "24px";
         deleteIcon.style.backgroundColor = "#000";
+        deleteIcon.title = "矩形を削除します";
 
         deleteIcon.onclick = (e: MouseEvent) => {
             // 矩形の削除
@@ -483,9 +484,6 @@ export class SquareAnnotation extends SquareAnnotationBase {
         section.id = id;
         section.classList.add("square-annotation");
         section.style.position = "absolute";
-
-        // NOTE: handlerを矩形外に少しはみ出させるため
-        // section.style.overflow = "hidden";
 
         // 他のアノテーションよりダブルクリックを優先する
         section.style.zIndex = generator.squareZindex.nextIndex();

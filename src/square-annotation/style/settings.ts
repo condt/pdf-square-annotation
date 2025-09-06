@@ -2,12 +2,14 @@
  * 矩形の最小サイズ
  */
 export const SQUARE_MIN_SIZE = 10;
+export const SQUARE_BACK_COLOR = "rgba(0,255,0,0.3)";
+
+/**
+ * resize handler style
+ */
 export const RESIZE_HANDLER_SIZE = "10px";
 export const RESIZE_HANDLER_POS = "-3px";
-export const RESIZE_HANDLER_BACK_COLOR = "#4dbadb";
-
-/** unused */
-export const RESIZE_HANDLER_BORDER = "3px solid #3274BA";
+export const RESIZE_HANDLER_BACK_COLOR = "#097CC8";
 
 /**
  * マウスカーソルのスタイル

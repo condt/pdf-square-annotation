@@ -90,18 +90,3 @@ window.addEventListener("webviewerloaded", async (event: any) => {
 
     log.debug("初期化完了");
 });
-
-// @ts-ignore click button
-window.clickEditSquare = () => {
-    Context.squareAnnotation.toggleMode();
-};
-
-// @ts-ignore
-window.showUndoStack = () => {
-    log.debug(Context.squareAnnotation.undoStack);
-};
-
-// @ts-ignore
-window.showCurrentData = () => {
-    log.debug(Context.squareAnnotation.exportSquareData());
-};

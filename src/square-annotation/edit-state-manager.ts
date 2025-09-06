@@ -1,6 +1,6 @@
 import { Context } from "../utils/context.js";
 import { log } from "../utils/log.js";
-import { SQUARE_MIN_SIZE } from "./style/settings.js";
+import { SQUARE_BACK_COLOR, SQUARE_MIN_SIZE } from "@/square-annotation/style/settings.js";
 import { EditingState } from "./types/square.js";
 
 export class EditStateManager {
@@ -131,7 +131,7 @@ export class EditStateManager {
         createSquare.style.pointerEvents = "none";
 
         // TODO: set default/config style
-        createSquare.style.backgroundColor = "rgba(0,255,0,0.3)";
+        createSquare.style.backgroundColor = SQUARE_BACK_COLOR;
 
         this.initParams();
         this.createStartX = createStartX;
