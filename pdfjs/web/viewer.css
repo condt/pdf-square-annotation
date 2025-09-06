@@ -6764,3 +6764,8 @@ dialog :link{
     display:none;
   }
 }
+
+/* 矩形アノテーションがページからはみ出す部分は表示しない */
+.page {
+    overflow: hidden !important;
+}
