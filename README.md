@@ -11,10 +11,9 @@ npm run build
 Copy the following into your project.
 * dist
 * pdfjs
-* index.html
 * LICENSE
 
 Call it in an iframe.
 ```html
-<iframe src="The path of the copied index.html"></iframe>
+<iframe src="The path of the copied dist/index.html"></iframe>
 ```

@@ -4,7 +4,8 @@
     "description": "PDF.js wrapper",
     "main": "index.js",
     "scripts": {
-        "build": "rm -r ./dist && tsc",
+        "build": "vite build --mode prod",
+        "dev": "vite --mode dev",
         "watch": "tsc --watch",
         "fmt": "npx prettier --write .",
         "lint": "eslint --ext .tsx,.ts ."
@@ -17,6 +18,7 @@
         "@typescript-eslint/eslint-plugin": "^8.41.0",
         "eslint": "^8.57.1",
         "prettier": "^3.6.2",
-        "typescript": "^5.9.2"
+        "typescript": "^5.9.2",
+        "vite": "^7.1.4"
     }
 }

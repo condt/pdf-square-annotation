@@ -18,7 +18,7 @@ export class App {
         } else {
             // URL以外の場合
             const pdfUrl = URL.createObjectURL(data);
-            iframe.src = `/pdfjs/web/viewer.html?file=${pdfUrl}`;
+            iframe.src = `../pdfjs/web/viewer.html?file=${pdfUrl}`;
         }
 
         const container = document.getElementById("pdfjs-container");
