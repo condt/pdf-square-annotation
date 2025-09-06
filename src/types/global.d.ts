@@ -31,6 +31,21 @@ declare global {
      */
     function setAnnotations(data: SquareData[]): void;
 
+    /**
+     * ## アノテーションを出力する
+     */
+    function getAnnotations(): SquareData[];
+
     function undo(): void;
     function redo(): void;
+
+    /**
+     * 矩形データをJSONファイルとしてダウンロードする
+     */
+    function exportAnnotations(): void;
+
+    /**
+     * ファイルを選択して矩形データをインポートする
+     */
+    function importAnnotations(): void;
 }

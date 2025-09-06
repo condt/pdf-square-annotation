@@ -607,4 +607,20 @@ export class SquareAnnotation extends SquareAnnotationBase {
 
         this.setSquareDoubleClick();
     }
+
+    /**
+     * 矩形データをJSONファイルとしてダウンロードする
+     */
+    downloadData() {
+        utils.download(this.currentSquares, "annotations.json", "application/json");
+    }
+
+    /**
+     * ファイルを選択して矩形データをインポートする
+     */
+    async importData() {
+        const data = await utils.selectFile(".json");
+        this.importSquareData(data);
+        console.log(data);
+    }
 }

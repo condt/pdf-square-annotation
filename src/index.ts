@@ -53,6 +53,28 @@ window.redo = () => {
     Context.squareAnnotation.redo();
 };
 
+window.getAnnotations = () => {
+    return Context.squareAnnotation.exportSquareData();
+};
+
+window.setAnnotations = (data: SquareData[]) => {
+    Context.squareAnnotation.importSquareData(data);
+};
+
+/**
+ * 矩形データをJSONファイルとしてダウンロードする
+ */
+window.exportAnnotations = () => {
+    Context.squareAnnotation.downloadData();
+};
+
+/**
+ * ファイルを選択して矩形データをインポートする
+ */
+window.importAnnotations = async () => {
+    await Context.squareAnnotation.importData();
+};
+
 window.addEventListener("webviewerloaded", async (event: any) => {
     log.debug("webviewerloaded");
 
