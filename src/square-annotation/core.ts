@@ -224,7 +224,6 @@ export class SquareAnnotation extends SquareAnnotationBase {
      */
     addUndoStack(squareSection: HTMLElement, operation: StackOperation) {
         const pageNumber = Context.pdfManager.getPageNumber(squareSection);
-        log.debug("addUndoStack: pageNumber: ", pageNumber);
 
         // stackに追加
         if (operation === "create" || operation === "modify") {
@@ -324,12 +323,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
         for (const currentSquare of currentStack.squares) {
             if (currentSquare.operation === "create") {
                 // createなら消す
-                this.refreshTargetSquare(
-                    Context.document.getElementById(currentSquare.id),
-                    currentSquare.props,
-                    "delete",
-                    "undo"
-                );
+                this.refreshTargetSquare(currentSquare.id, currentSquare.props, "delete", "undo");
 
                 // update current data
                 this.deleteCurrentSquare(currentSquare.id);
@@ -401,16 +395,24 @@ export class SquareAnnotation extends SquareAnnotationBase {
 
     /**
      * ### 対象の矩形をundo/redoする
-     * HTMLElementを渡す場合はidを指定したものを渡す
+     * * 削除時はHTMLElementではなくstring idを渡す
+     * * HTMLElementを渡す場合はidを指定したものを渡す
      */
     private refreshTargetSquare(
-        targetElem: HTMLElement,
+        targetElem: HTMLElement | string,
         square: SquareProps,
         operation: "modify" | "delete",
         ur: "undo" | "redo"
     ) {
+        if (typeof targetElem === "string") {
+            if (operation === "delete" && this.editStateManager.isSelect(targetElem)) {
+                // 選択中を削除する場合はreadyに戻す
+                this.editStateManager.setReadyState();
+            }
+            targetElem = Context.document.getElementById(targetElem);
+        }
         if (targetElem == null) {
-            log.debug(`refreshTargetSquare: ${ur} target element is null.`, "color: red");
+            log.debug(`refreshTargetSquare: ${ur} target element is null.`, "color: yellow");
             return;
         }
         if (operation === "delete") {
@@ -452,7 +454,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
             } else if (square.operation === "modify") {
                 this.refreshTargetSquare(Context.document.getElementById(square.id), square.props, "modify", "redo");
             } else if (square.operation === "delete") {
-                this.refreshTargetSquare(Context.document.getElementById(square.id), square.props, "delete", "redo");
+                this.refreshTargetSquare(square.id, square.props, "delete", "redo");
             }
         }
 
@@ -480,6 +482,10 @@ export class SquareAnnotation extends SquareAnnotationBase {
             log.warn(`${id}の矩形は存在します`);
             return;
         }
+        if (annotationLayer == null) {
+            log.debug("annotationLayer is null.", "color: yellow");
+            return;
+        }
 
         const section = Context.document.createElement("section");
         section.id = id;
@@ -498,7 +504,6 @@ export class SquareAnnotation extends SquareAnnotationBase {
             section.style.height = `${style.height * 100}%`;
 
             // set style
-            log.debug("style: ", style.style);
             for (const [key, value] of Object.entries(style.style)) {
                 log.debug(key, value);
                 section.style[key] = value;
