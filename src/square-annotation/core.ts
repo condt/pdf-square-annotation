@@ -177,6 +177,11 @@ export class SquareAnnotation extends SquareAnnotationBase {
         // add undo stack
         this.addUndoStack(square, "delete");
 
+        if (this.editStateManager.isSelect(id)) {
+            // 選択中の矩形を削除する場合は選択状態をキャンセルする
+            this.editStateManager.setReadyState();
+        }
+
         // undo stackを更新してから消す必要がある
         square.remove();
         this.removeResizeHandler();

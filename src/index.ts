@@ -1,13 +1,13 @@
-import { SquareAnnotation } from "./square-annotation/core.js";
 import { App } from "./app/app.js";
 import { AppConfig } from "./app/config.js";
 import { PDFManager } from "./app/pdf-manager.js";
+import { SquareAnnotation } from "./square-annotation/core.js";
+import { Context } from "./utils/context.js";
 import { log } from "./utils/log.js";
 import { AppQueryParameters } from "./utils/parameters.js";
-import { Context } from "./utils/context.js";
 
+import type { ExportData } from "./square-annotation/types/square.js";
 import type { AppConfigType } from "./types/app-config.js";
-import type { ExportData, SquareData } from "./square-annotation/types/square.js";
 
 Context.params = new AppQueryParameters();
 Context.config = new AppConfig();
