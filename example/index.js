@@ -1,6 +1,6 @@
 const data = [
     {
-        id: "square-annotation-1",
+        id: 1,
         pageNumber: 12,
         props: {
             x: 0.49019607843137253,
@@ -14,7 +14,7 @@ const data = [
         },
     },
     {
-        id: "square-annotation-2",
+        id: 2,
         pageNumber: 12,
         props: {
             x: 0.09068627450980392,
@@ -28,7 +28,7 @@ const data = [
         },
     },
     {
-        id: "square-annotation-3",
+        id: 3,
         pageNumber: 12,
         props: {
             x: 0.5073529411764706,
@@ -42,7 +42,7 @@ const data = [
         },
     },
     {
-        id: "square-annotation-4",
+        id: 4,
         pageNumber: 1,
         props: {
             x: 0.11274509803921569,
@@ -56,7 +56,7 @@ const data = [
         },
     },
     {
-        id: "square-annotation-5",
+        id: 5,
         pageNumber: 1,
         props: {
             x: 0.13848039215686275,
@@ -70,7 +70,7 @@ const data = [
         },
     },
     {
-        id: "square-annotation-6",
+        id: 6,
         pageNumber: 1,
         props: {
             x: 0.05759803921568627,
@@ -84,7 +84,7 @@ const data = [
         },
     },
     {
-        id: "square-annotation-7",
+        id: 7,
         pageNumber: 2,
         props: {
             x: 0.07230392156862746,
@@ -98,7 +98,7 @@ const data = [
         },
     },
     {
-        id: "square-annotation-8",
+        id: 8,
         pageNumber: 10,
         props: {
             x: 0.5098039215686274,
@@ -112,7 +112,7 @@ const data = [
         },
     },
     {
-        id: "square-annotation-9",
+        id: 9,
         pageNumber: 11,
         props: {
             x: 0.08088235294117647,
@@ -126,7 +126,7 @@ const data = [
         },
     },
     {
-        id: "square-annotation-10",
+        id: 10,
         pageNumber: 11,
         props: {
             x: 0.06985294117647059,
@@ -140,7 +140,7 @@ const data = [
         },
     },
     {
-        id: "square-annotation-11",
+        id: 11,
         pageNumber: 11,
         props: {
             x: 0.5036764705882353,

@@ -1,4 +1,4 @@
-import { SquareData } from "../square-annotation/types/square.js";
+import { ExportData } from "../square-annotation/types/square.js";
 import { AppConfigType } from "./app-config.js";
 
 export {};
@@ -29,12 +29,12 @@ declare global {
     /**
      * ## アノテーションを描画する
      */
-    function setAnnotations(data: SquareData[]): void;
+    function setAnnotations(data: ExportData): void;
 
     /**
      * ## アノテーションを出力する
      */
-    function getAnnotations(): SquareData[];
+    function getAnnotations(): ExportData;
 
     function undo(): void;
     function redo(): void;

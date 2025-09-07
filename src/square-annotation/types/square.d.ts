@@ -19,9 +19,21 @@ export type Position = "top-left" | "top-right" | "bottom-left" | "bottom-right"
 
 export type StackOperation = "create" | "modify" | "delete";
 
-export interface SquareData {
+export interface ExportData {
+    squares: ExportSquareData[];
+}
+
+export interface SquareData extends SquareBase {
     /** square要素のid */
     id: string;
+}
+
+export interface ExportSquareData extends SquareBase {
+    /** square要素のid */
+    id: number;
+}
+
+export interface SquareBase {
     /** page番号 */
     pageNumber: number;
     /** スタイルなどのプロパティ */

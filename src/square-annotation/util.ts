@@ -77,7 +77,17 @@ class SquareIdGenerator extends Generator {
     /**
      * 矩形idを更新する
      */
-    updateNextId(elemIds: string[]) {
+    updateNextId(ids: number[]) {
+        const maxId = Math.max(...ids) + 1;
+
+        // update
+        generator.squareId.value = maxId;
+    }
+
+    /**
+     * 矩形idを更新する
+     */
+    updateNextId2(elemIds: string[]) {
         let maxId = 0;
         elemIds.forEach((elemId) => {
             const splits = elemId.split("-");

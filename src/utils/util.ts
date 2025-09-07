@@ -22,7 +22,7 @@ const download = (content: object | string, filename: string, type: ContentType)
  * ファイルを選択する
  */
 const selectFile = async (accept: string = "*") => {
-    return new Promise<any>((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         const i = <HTMLInputElement>document.createElement("input");
         i.setAttribute("type", "file");
         i.setAttribute("accept", accept);
@@ -35,7 +35,7 @@ const selectFile = async (accept: string = "*") => {
             }
             const file = files[0];
             const text = await file.text();
-            resolve(JSON.parse(text));
+            resolve(text);
         };
         i.oncancel = () => {
             reject("cancel");

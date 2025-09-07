@@ -16,7 +16,8 @@ import { getSupportStyles } from "./style/square-style.js";
 import { DELETE_SVG } from "./style/svg/delete.js";
 import { generator, getAllSquares, setPercentStyle } from "./util.js";
 
-import type { Position, SquareData, SquareOperation, SquareProps, StackOperation } from "./types/square.js";
+import { createCurrentData, createExportData } from "./io.js";
+import type { ExportData, Position, SquareData, SquareOperation, SquareProps, StackOperation } from "./types/square.js";
 
 export class SquareAnnotation extends SquareAnnotationBase {
     /**
@@ -576,14 +577,14 @@ export class SquareAnnotation extends SquareAnnotationBase {
     /**
      * 矩形アノテーションデータを出力する
      */
-    exportSquareData(): SquareData[] {
-        return utils.deepCopy(this.currentSquares);
+    getAnnotations(): ExportData {
+        return createExportData(this.currentSquares);
     }
 
     /**
      * 矩形アノテーションデータを描画する
      */
-    importSquareData(data: SquareData[]) {
+    setAnnotations(data: ExportData) {
         // 既存矩形の削除
         getAllSquares().forEach((square) => square.remove());
 
@@ -593,10 +594,11 @@ export class SquareAnnotation extends SquareAnnotationBase {
         SquareAnnotationBase.stackId = 1;
 
         // 次の矩形idをimport dataから決める
-        generator.squareId.updateNextId(data.map((d) => d.id));
+        generator.squareId.updateNextId(data.squares.map((s) => s.id));
+        const squares = createCurrentData(data);
 
-        this.initialSquares = data;
-        this.currentSquares = utils.deepCopy(data);
+        this.initialSquares = squares;
+        this.currentSquares = utils.deepCopy(squares);
 
         this.editStateManager.setReadyState();
 
@@ -612,7 +614,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
      * 矩形データをJSONファイルとしてダウンロードする
      */
     downloadData() {
-        utils.download(this.currentSquares, "annotations.json", "application/json");
+        utils.download(this.getAnnotations(), "annotations.json", "application/json");
     }
 
     /**
@@ -620,7 +622,6 @@ export class SquareAnnotation extends SquareAnnotationBase {
      */
     async importData() {
         const data = await utils.selectFile(".json");
-        this.importSquareData(data);
-        console.log(data);
+        this.setAnnotations(JSON.parse(data));
     }
 }

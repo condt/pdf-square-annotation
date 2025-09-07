@@ -7,7 +7,7 @@ import { AppQueryParameters } from "./utils/parameters.js";
 import { Context } from "./utils/context.js";
 
 import type { AppConfigType } from "./types/app-config.js";
-import type { SquareData } from "./square-annotation/types/square.js";
+import type { ExportData, SquareData } from "./square-annotation/types/square.js";
 
 Context.params = new AppQueryParameters();
 Context.config = new AppConfig();
@@ -26,13 +26,6 @@ window.openPdf = async (data: Blob | string) => {
 window.setAppConfig = (config: AppConfigType) => {
     Context.config.setConfig(config);
     log.debug("set config: ", Context.config.config);
-};
-
-/**
- * API: アノテーションを描画する
- */
-window.setAnnotations = (data: SquareData[]) => {
-    Context.squareAnnotation.importSquareData(data);
 };
 
 // @ts-ignore API
@@ -54,11 +47,14 @@ window.redo = () => {
 };
 
 window.getAnnotations = () => {
-    return Context.squareAnnotation.exportSquareData();
+    return Context.squareAnnotation.getAnnotations();
 };
 
-window.setAnnotations = (data: SquareData[]) => {
-    Context.squareAnnotation.importSquareData(data);
+/**
+ * API: アノテーションを描画する
+ */
+window.setAnnotations = (data: ExportData) => {
+    Context.squareAnnotation.setAnnotations(data);
 };
 
 /**
