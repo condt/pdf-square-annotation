@@ -1,8 +1,12 @@
-# Dependencies
-* [PDF.js](https://github.com/mozilla/pdf.js) v5.4.54
-* [Material Icons](https://fonts.google.com/icons)
+![demo](./demo.gif)
 
-# How to use
+# Usage Example
+1. serve repository root
+2. open `/example/index.html`
+
+See the example directory for details.
+
+# How to install in your project
 run build.
 ```sh
 npm run build
@@ -17,3 +21,7 @@ Call it in an iframe.
 ```html
 <iframe src="The path of the copied dist/index.html"></iframe>
 ```
+
+# Dependencies
+* [PDF.js](https://github.com/mozilla/pdf.js) v5.4.54
+* [Material Icons](https://fonts.google.com/icons)
