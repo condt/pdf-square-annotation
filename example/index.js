@@ -1,3 +1,13 @@
+const getPDFUrl = () => {
+    if (window.location.protocol.startsWith("https")) {
+        // GitHub Pages: require repository name
+        return "/pdf-square-annotation/pdfjs/web/compressed.tracemonkey-pldi-09.pdf";
+    } else {
+        // local
+        return "/pdfjs/web/compressed.tracemonkey-pldi-09.pdf";
+    }
+};
+
 window.init = async () => {
     const iframe = document.getElementById("pdfjs");
 
@@ -5,7 +15,7 @@ window.init = async () => {
     // iframe.contentWindow.setAppConfig(config);
 
     // fetch PDF
-    const response = await fetch("/example/compressed.tracemonkey-pldi-09.pdf");
+    const response = await fetch(getPDFUrl());
     const bin = await response.blob();
 
     // open PDF
