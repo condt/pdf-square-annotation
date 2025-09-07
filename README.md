@@ -1,5 +1,11 @@
 ![demo](./demo.gif)
 
+# Features
+* draw/edit square annotation
+* undo/redo
+* export squares(JSON)
+* import squares(JSON)
+
 # Usage Example
 1. serve repository root
 2. open `/example/index.html`

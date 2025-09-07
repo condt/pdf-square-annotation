@@ -25,7 +25,6 @@ window.openPdf = async (data: Blob | string) => {
  */
 window.setAppConfig = (config: AppConfigType) => {
     Context.config.setConfig(config);
-    log.debug("set config: ", Context.config.config);
 };
 
 // @ts-ignore API
@@ -72,8 +71,6 @@ window.importAnnotations = async () => {
 };
 
 window.addEventListener("webviewerloaded", async (event: any) => {
-    log.debug("webviewerloaded");
-
     const contentWindow = event?.detail?.source;
     const doc = contentWindow.document;
     const PDFViewerApplication = contentWindow.PDFViewerApplication;
@@ -105,6 +102,4 @@ window.addEventListener("webviewerloaded", async (event: any) => {
 
     Context.pdfManager = new PDFManager();
     Context.squareAnnotation = new SquareAnnotation();
-
-    log.debug("初期化完了");
 });
