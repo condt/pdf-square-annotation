@@ -7,8 +7,6 @@ const mouseDown = (that: SquareAnnotation) => {
     const stateManager = that.editStateManager;
 
     return (e: MouseEvent) => {
-        log.debug("layer mousedown");
-
         // ドラッグ時に他の矩形の上をカーソル表示させる
         changeSquarePointerEvents("none");
 
@@ -45,8 +43,6 @@ const mouseUp = (that: SquareAnnotation) => {
     const stateManager = that.editStateManager;
 
     return (e: MouseEvent) => {
-        log.debug("layer mouseup");
-
         // 矩形のクリックイベントを有効にする
         changeSquarePointerEvents("auto");
 
@@ -71,8 +67,6 @@ const mouseLeave = (that: SquareAnnotation) => {
     const stateManager = that.editStateManager;
 
     return (e: MouseEvent) => {
-        log.debug("layer mouseleave");
-
         // 矩形のクリックイベントを有効にする
         changeSquarePointerEvents("auto");
 
@@ -103,7 +97,6 @@ const completeCreate = (that: SquareAnnotation) => {
 
     // 小さすぎる場合は描画しない
     const { width, height, x, y } = stateManager.creatingSquareElement.getBoundingClientRect();
-    // TODO: set MIN SIZE
     if (width < SQUARE_MIN_SIZE || height < SQUARE_MIN_SIZE) {
         stateManager.cancelCreate();
         return false;

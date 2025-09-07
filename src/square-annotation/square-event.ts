@@ -8,8 +8,6 @@ const mouseDown = (that: SquareAnnotation, squareId: string) => {
     const stateManager = that.editStateManager;
 
     return (e: MouseEvent) => {
-        log.debug("square mousedown");
-
         // select or ready時のみ処理する
         if (stateManager.canCreate()) {
             if (!stateManager.isSelect(squareId)) {
@@ -30,11 +28,6 @@ const click = () => {
     return (e: MouseEvent) => {
         // layerにmousedownを伝播させない
         e.stopPropagation();
-
-        log.debug("square click");
-
-        // 選択状態にする
-        // that.selectSquare(squareId);
     };
 };
 

@@ -425,7 +425,6 @@ export class SquareAnnotation extends SquareAnnotationBase {
             return;
         }
         if (operation === "modify") {
-            log.debug(square);
             targetElem.style.left = `${square.x * 100}%`;
             targetElem.style.top = `${square.y * 100}%`;
             targetElem.style.width = `${square.width * 100}%`;
@@ -433,7 +432,6 @@ export class SquareAnnotation extends SquareAnnotationBase {
 
             // set style
             for (const [key, value] of Object.entries(square.style)) {
-                log.debug(key, value);
                 targetElem.style[key] = value;
             }
         }
@@ -510,7 +508,6 @@ export class SquareAnnotation extends SquareAnnotationBase {
 
             // set style
             for (const [key, value] of Object.entries(style.style)) {
-                log.debug(key, value);
                 section.style[key] = value;
             }
         }

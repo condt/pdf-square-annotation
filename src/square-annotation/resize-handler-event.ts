@@ -7,8 +7,6 @@ import { SquareAnnotation } from "./core.js";
 const mouseDown = (that: SquareAnnotation, resizeHandlerId: string, squareWidth: string, squareHeight: string) => {
     const stateManager = that.editStateManager;
 
-    log.debug("edit handler mousedown");
-
     return (e: MouseEvent) => {
         const resizeSquare = stateManager.getSelectingSquare();
         const layer = resizeSquare.parentElement;
@@ -25,7 +23,6 @@ const mouseDown = (that: SquareAnnotation, resizeHandlerId: string, squareWidth:
 
         if (resizeHandlerId === "square-handler-bottom-right") {
             // 右下クリック時(左上起点)
-            log.debug("右下");
             resizeSquare.style.left = `${leftX}px`;
             resizeSquare.style.top = `${topY}px`;
             resizeSquare.style.right = null;
@@ -35,7 +32,6 @@ const mouseDown = (that: SquareAnnotation, resizeHandlerId: string, squareWidth:
             resizeStartY = topY;
         } else if (resizeHandlerId === "square-handler-top-left") {
             // 左上クリック時(右下起点)
-            log.debug("左上");
             resizeSquare.style.left = null;
             resizeSquare.style.top = null;
             resizeSquare.style.right = `${rightX}px`;
@@ -45,7 +41,6 @@ const mouseDown = (that: SquareAnnotation, resizeHandlerId: string, squareWidth:
             resizeStartY = topY + height;
         } else if (resizeHandlerId === "square-handler-top-right") {
             // 右上クリック時(左下起点)
-            log.debug("右上");
             resizeSquare.style.left = `${leftX}px`;
             resizeSquare.style.top = null;
             resizeSquare.style.right = null;
@@ -55,7 +50,6 @@ const mouseDown = (that: SquareAnnotation, resizeHandlerId: string, squareWidth:
             resizeStartY = topY + height;
         } else if (resizeHandlerId === "square-handler-bottom-left") {
             // 左下クリック時(右上起点)
-            log.debug("左下");
             resizeSquare.style.left = null;
             resizeSquare.style.top = `${topY}px`;
             resizeSquare.style.right = `${rightX}px`;

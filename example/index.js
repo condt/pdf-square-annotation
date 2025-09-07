@@ -20,8 +20,6 @@ window.init = async () => {
 
     // open PDF
     await iframe.contentWindow.openPdf(bin);
-
-    console.log("Initialization complete!");
 };
 
 const config = {
