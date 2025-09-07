@@ -4,6 +4,14 @@ import { SQUARE_BACK_COLOR } from "./style/settings";
 
 const ID_PREFIX = "square-annotation-";
 
+export const checkImportData = (squares: SquareData[], pagesCount: number) => {
+    squares.forEach((s) => {
+        if (s.pageNumber < 1 || pagesCount < s.pageNumber) {
+            throw "無効なアノテーション情報です";
+        }
+    });
+};
+
 /**
  * 内部データをexport形式に変換する
  */

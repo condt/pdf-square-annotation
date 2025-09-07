@@ -16,7 +16,7 @@ import { getSupportStyles } from "./style/square-style.js";
 import { DELETE_SVG } from "./style/svg/delete.js";
 import { generator, getAllSquares, setPercentStyle } from "./util.js";
 
-import { createCurrentData, createExportData } from "./io.js";
+import { checkImportData, createCurrentData, createExportData } from "./io.js";
 import type { ExportData, Position, SquareData, SquareOperation, SquareProps, StackOperation } from "./types/square.js";
 
 export class SquareAnnotation extends SquareAnnotationBase {
@@ -585,6 +585,9 @@ export class SquareAnnotation extends SquareAnnotationBase {
      * 矩形アノテーションデータを描画する
      */
     setAnnotations(data: ExportData) {
+        const squares = createCurrentData(data);
+        checkImportData(squares, Context.pagesCount);
+
         // 既存矩形の削除
         getAllSquares().forEach((square) => square.remove());
 
@@ -595,7 +598,6 @@ export class SquareAnnotation extends SquareAnnotationBase {
 
         // 次の矩形idをimport dataから決める
         generator.squareId.updateNextId(data.squares.map((s) => s.id));
-        const squares = createCurrentData(data);
 
         this.initialSquares = squares;
         this.currentSquares = utils.deepCopy(squares);
