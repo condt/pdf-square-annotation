@@ -1,6 +1,6 @@
 # Demo
-demo page
-https://condt.github.io/pdf-square-annotation/example/index.html  
+demo page  
+https://condt.github.io/pdf-square-annotation/demo.html  
 
 ![demo](./demo.gif)
 
@@ -12,24 +12,19 @@ https://condt.github.io/pdf-square-annotation/example/index.html
 
 # Usage Example
 1. serve repository root
-2. open `/example/index.html`
+2. open `/demo.html`
 
 See the example directory for details.
 
 # How to install in your project
-run build.
-```sh
-npm run build
-```
-
 Copy the following into your project.
-* dist
+* build
 * pdfjs
 * LICENSE
 
 Call it in an iframe.
 ```html
-<iframe src="The path of the copied dist/index.html"></iframe>
+<iframe src="The path of the copied build/index.html"></iframe>
 ```
 
 # Dependencies

@@ -2,7 +2,7 @@ module.exports = {
     root: true,
     parser: "@typescript-eslint/parser",
     plugins: ["@typescript-eslint"],
-    ignorePatterns: ["dist"],
+    ignorePatterns: ["dist", "build"],
     env: {
         browser: true,
         es2021: true,

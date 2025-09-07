@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
         build: {
             sourcemap: mode !== "prod",
             emptyOutDir: true,
-            outDir: "dist",
+            outDir: "build",
         },
         server: {
             host: true,
