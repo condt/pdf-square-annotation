@@ -1,7 +1,9 @@
+import { utils } from "@/utils/util.js";
 import { log } from "../utils/log.js";
 import { SquareAnnotation } from "./core.js";
 import { SQUARE_MIN_SIZE } from "./style/settings.js";
-import { changeSquarePointerEvents, generator } from "./util.js";
+import { SquareData } from "./types/square.js";
+import { changeSquarePointerEvents, generator, getNumberId } from "./util.js";
 
 const mouseDown = (that: SquareAnnotation) => {
     const stateManager = that.editStateManager;
@@ -105,10 +107,19 @@ const completeCreate = (that: SquareAnnotation) => {
     log.debug("complete create");
 
     // percent指定にしてundo stackに追加
-    that.addUndoStack(stateManager.creatingSquareElement, "create");
+    const square = that.addUndoStack(stateManager.creatingSquareElement, "create");
 
     // 選択状態にする
     that.selectSquare(stateManager.creatingSquareElement.id);
+
+    // dispatch to parent
+    utils.dispatchEvent("change-square", {
+        type: "create",
+        trigger: "operation",
+        id: getNumberId(square.id),
+        pageNumber: square.pageNumber,
+        props: square.props,
+    });
 
     return true;
 };
@@ -121,14 +132,27 @@ const completeResize = (that: SquareAnnotation) => {
 
     log.debug(`complete resize`);
 
+    let square: SquareData = null;
     if (stateManager.state === "resize-dragging") {
         // サイズを変更した場合のみundo stackに追加
         // percent指定にしてundo stackに追加
-        that.addUndoStack(stateManager.getSelectingSquare(), "modify");
+        square = that.addUndoStack(stateManager.getSelectingSquare(), "modify");
     }
 
     // 選択状態に戻す
     stateManager.setSelectState(null);
+
+    if (square != null) {
+        // NOTE: 現時点ではresizeはdispatchしない(createとdeleteのみdispatchする)
+        // dispatch to parent
+        // utils.dispatchEvent("change-square", {
+        //     type: "resize",
+        //     trigger: "operation",
+        //     id: getNumberId(square.id),
+        //     pageNumber: square.pageNumber,
+        //     props: square.props,
+        // });
+    }
 };
 
 /**
@@ -139,14 +163,27 @@ const completeMove = (that: SquareAnnotation) => {
 
     log.debug(`complete move`);
 
+    let square: SquareData = null;
     if (stateManager.state === "move-dragging") {
         // 動かした場合のみundo stackに追加
         // percent指定にしてundo stackに追加
-        that.addUndoStack(stateManager.getSelectingSquare(), "modify");
+        square = that.addUndoStack(stateManager.getSelectingSquare(), "modify");
     }
 
     // 選択状態に戻す
     stateManager.setSelectState(null);
+
+    if (square != null) {
+        // NOTE: 現時点ではmoveはdispatchしない(createとdeleteのみdispatchする)
+        // dispatch to parent
+        // utils.dispatchEvent("change-square", {
+        //     type: "move",
+        //     trigger: "operation",
+        //     id: getNumberId(square.id),
+        //     pageNumber: square.pageNumber,
+        //     props: square.props,
+        // });
+    }
 };
 
 export const layerEvent = {

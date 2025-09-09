@@ -22,6 +22,11 @@ window.init = async () => {
     await iframe.contentWindow.openPdf(bin);
 };
 
+window.addEventListener("change-square", (e) => {
+    console.log(e.type);
+    console.log(e.detail);
+});
+
 const config = {
     squareAnnotation: {
         SquareStyle: {

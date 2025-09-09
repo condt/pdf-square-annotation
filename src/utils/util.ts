@@ -1,8 +1,36 @@
-type ContentType = "application/json" | "text/plain";
+import { SquareProps } from "@/square-annotation/types/square";
+
+type DispatchType = "change-square";
+type ChangeSquareType = "create" | "delete" | "resize" | "move";
+type ChangeSquareTrigger = "operation" | "undo" | "redo";
+
+type DispatchDetail<T> = T extends "change-square" ? ChangeSquareEvent : {};
+
+export interface ChangeSquareEvent {
+    type: ChangeSquareType;
+    trigger: ChangeSquareTrigger;
+    id: number;
+    pageNumber: number;
+    props?: SquareProps;
+}
+
+/**
+ * parentにeventを送信する
+ */
+const dispatchEvent = <T extends DispatchType>(type: T, detail: DispatchDetail<T>) => {
+    const event = new CustomEvent(type, {
+        cancelable: true,
+        bubbles: true,
+        detail,
+    });
+    window.parent.dispatchEvent(event);
+};
 
 const deepCopy = (data: any) => {
     return JSON.parse(JSON.stringify(data));
 };
+
+type ContentType = "application/json" | "text/plain";
 
 /**
  * 指定した内容をファイルとしてダウンロードする
@@ -44,6 +72,7 @@ const selectFile = async (accept: string = "*") => {
 };
 
 export const utils = {
+    dispatchEvent,
     deepCopy,
     download,
     selectFile,

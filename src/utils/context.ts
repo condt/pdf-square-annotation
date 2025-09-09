@@ -5,7 +5,9 @@ import { AppQueryParameters } from "./parameters.js";
 import { AppConfig } from "../app/config.js";
 
 export class Context {
+    /** PDF.jsのwindow */
     static window: Window;
+    /** PDF.jsのdocument */
     static document: Document;
     static PDFViewerApplication: any;
     static pdfjs: any;

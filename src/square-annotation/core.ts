@@ -14,7 +14,7 @@ import {
 } from "./style/settings.js";
 import { getSupportStyles } from "./style/square-style.js";
 import { DELETE_SVG } from "./style/svg/delete.js";
-import { generator, getAllSquares, setPercentStyle } from "./util.js";
+import { generator, getAllSquares, getNumberId, setPercentStyle } from "./util.js";
 
 import { checkImportData, createCurrentData, createExportData } from "./io.js";
 import type { ExportData, Position, SquareData, SquareOperation, SquareProps, StackOperation } from "./types/square.js";
@@ -174,6 +174,8 @@ export class SquareAnnotation extends SquareAnnotationBase {
             return;
         }
 
+        const pageNumber = Context.pdfManager.getPageNumber(square);
+
         // add undo stack
         this.addUndoStack(square, "delete");
 
@@ -186,7 +188,16 @@ export class SquareAnnotation extends SquareAnnotationBase {
         square.remove();
         this.removeResizeHandler();
         this.removeDeleteIcon();
+
+        // dispatch to parent
+        utils.dispatchEvent("change-square", {
+            type: "delete",
+            trigger: "operation",
+            id: getNumberId(square.id),
+            pageNumber,
+        });
     }
+
     /**
      * ダブルクリックで矩形編集モードに入れるようにする
      */
@@ -227,7 +238,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
      * * current dataも更新する
      * * 矩形の座標とsizeをpercent指定にする
      */
-    addUndoStack(squareSection: HTMLElement, operation: StackOperation) {
+    addUndoStack(squareSection: HTMLElement, operation: StackOperation): SquareData | null {
         const pageNumber = Context.pdfManager.getPageNumber(squareSection);
 
         // stackに追加
@@ -269,6 +280,11 @@ export class SquareAnnotation extends SquareAnnotationBase {
                     },
                 ],
             });
+
+            SquareAnnotation.stackId++;
+            this.stackIndex++;
+
+            return square;
         } else if (operation === "delete") {
             if (this.stackIndex < this.undoStack.length - 1) {
                 // undo中に操作された場合は現在位置以降の操作は消す
@@ -332,6 +348,14 @@ export class SquareAnnotation extends SquareAnnotationBase {
 
                 // update current data
                 this.deleteCurrentSquare(currentSquare.id);
+
+                // dispatch to parent
+                utils.dispatchEvent("change-square", {
+                    type: "delete",
+                    trigger: "operation",
+                    id: getNumberId(currentSquare.id),
+                    pageNumber: currentSquare.pageNumber,
+                });
             } else {
                 // modify or deleteは直近データで復元する
                 const latestSquare = this.getLatestUndo(currentSquare.id);
@@ -359,6 +383,15 @@ export class SquareAnnotation extends SquareAnnotationBase {
                     // update current data
                     const copied: SquareData = this.copySquareData(latestSquare);
                     this.updateCurrentSquares("create", copied);
+
+                    // dispatch to parent
+                    utils.dispatchEvent("change-square", {
+                        type: "create",
+                        trigger: "operation",
+                        id: getNumberId(currentSquare.id),
+                        pageNumber: currentSquare.pageNumber,
+                        props: copied.props,
+                    });
                 }
             }
         }
@@ -447,17 +480,34 @@ export class SquareAnnotation extends SquareAnnotationBase {
         }
 
         const nextStack = this.undoStack[this.stackIndex + 1];
-        log.debug("nextStack: ", nextStack);
         for (const square of nextStack.squares) {
             if (square.operation === "create") {
                 const annotationLayer = Context.pdfManager.getAnnotationLayer(square.pageNumber);
                 const section = this.createSquareSection(square.id, annotationLayer, square.props);
                 this.updateCurrentSquares("create", this.copySquareData(square));
                 log.debug("create section: ", section);
+
+                // dispatch to parent
+                utils.dispatchEvent("change-square", {
+                    type: "create",
+                    trigger: "operation",
+                    id: getNumberId(square.id),
+                    pageNumber: square.pageNumber,
+                    props: square.props,
+                });
             } else if (square.operation === "modify") {
                 this.refreshTargetSquare(Context.document.getElementById(square.id), square.props, "modify", "redo");
             } else if (square.operation === "delete") {
                 this.refreshTargetSquare(square.id, square.props, "delete", "redo");
+
+                // dispatch to parent
+                utils.dispatchEvent("change-square", {
+                    type: "delete",
+                    trigger: "operation",
+                    id: getNumberId(square.id),
+                    pageNumber: square.pageNumber,
+                    props: square.props,
+                });
             }
         }
 

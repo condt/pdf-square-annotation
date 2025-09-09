@@ -1,8 +1,7 @@
 import { ExportData, ExportSquareData, SquareData, SquareProps } from "@/square-annotation/types/square";
 import { SupportStyle } from "./style/square-style";
 import { SQUARE_BACK_COLOR } from "./style/settings";
-
-const ID_PREFIX = "square-annotation-";
+import { getNumberId, getStrId } from "./util";
 
 export const checkImportData = (squares: SquareData[], pagesCount: number) => {
     squares.forEach((s) => {
@@ -62,24 +61,4 @@ const getSupportStyle = (style?: SupportStyle): SupportStyle => {
         backgroundColor: style?.backgroundColor ?? SQUARE_BACK_COLOR,
         border: style?.border ?? null,
     };
-};
-
-/**
- * ## 要素idから数値のidを取得する
- * @example "square-annotation-1" -> 1
- */
-const getNumberId = (id: string) => {
-    const i = parseInt(id.replace(ID_PREFIX, ""));
-    if (isNaN(i)) {
-        throw `getId: ${id} is invalid.`;
-    }
-    return i;
-};
-
-/**
- * ## 数値のidから要素idを返す
- * @example 1 -> "square-annotation-1"
- */
-const getStrId = (id: number) => {
-    return `${ID_PREFIX}${id}`;
 };

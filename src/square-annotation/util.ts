@@ -1,5 +1,26 @@
 import { Context } from "../utils/context.js";
 import { log } from "../utils/log.js";
+import { ID_PREFIX } from "./style/settings.js";
+
+/**
+ * ## 要素idから数値のidを取得する
+ * @example "square-annotation-1" -> 1
+ */
+export const getNumberId = (id: string) => {
+    const i = parseInt(id.replace(ID_PREFIX, ""));
+    if (isNaN(i)) {
+        throw `getId: ${id} is invalid.`;
+    }
+    return i;
+};
+
+/**
+ * ## 数値のidから要素idを返す
+ * @example 1 -> "square-annotation-1"
+ */
+export const getStrId = (id: number) => {
+    return `${ID_PREFIX}${id}`;
+};
 
 /**
  * ### 矩形の表示をpercent指定に変更する
@@ -71,7 +92,7 @@ class Generator {
 class SquareIdGenerator extends Generator {
     nextId() {
         const id = this.next();
-        return `square-annotation-${id}`;
+        return getStrId(id);
     }
 
     /**
@@ -79,28 +100,6 @@ class SquareIdGenerator extends Generator {
      */
     updateNextId(ids: number[]) {
         const maxId = Math.max(...ids) + 1;
-
-        // update
-        generator.squareId.value = maxId;
-    }
-
-    /**
-     * 矩形idを更新する
-     */
-    updateNextId2(elemIds: string[]) {
-        let maxId = 0;
-        elemIds.forEach((elemId) => {
-            const splits = elemId.split("-");
-            const ends = splits[splits.length - 1];
-            const id = parseInt(ends);
-            if (isNaN(id)) {
-                log.error(`updateNextId: ${elemId} is invalid.`);
-                return;
-            }
-            if (id > maxId) {
-                maxId = id;
-            }
-        });
 
         // update
         generator.squareId.value = maxId;

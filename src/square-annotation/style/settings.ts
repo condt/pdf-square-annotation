@@ -1,3 +1,5 @@
+export const ID_PREFIX = "square-annotation-";
+
 /**
  * 矩形の最小サイズ
  */
