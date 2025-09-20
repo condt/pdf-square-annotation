@@ -216,6 +216,13 @@ export abstract class SquareAnnotationBase {
     }
 
     /**
+     * for debug
+     */
+    showCurrentSquares() {
+        log.debug(this.currentSquares);
+    }
+
+    /**
      * 矩形の作成、リサイズを可能にする
      */
     abstract enableEditSquare(layer: HTMLElement): void;

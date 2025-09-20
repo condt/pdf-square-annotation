@@ -37,6 +37,11 @@ window.unlockAnnotations = () => {
     iframe.contentWindow.lockAnnotations({ annotationIds: [] });
 };
 
+window.showCurrentSquares = () => {
+    const iframe = document.getElementById("pdfjs");
+    iframe.contentWindow.showCurrentSquares();
+};
+
 const config = {
     squareAnnotation: {
         SquareStyle: {

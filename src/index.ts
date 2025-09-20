@@ -78,6 +78,11 @@ window.lockAnnotations = (args: LockAnnotationsArgs) => {
     Context.squareAnnotation.lockAnnotations(args);
 };
 
+// @ts-ignore for debug
+window.showCurrentSquares = () => {
+    Context.squareAnnotation.showCurrentSquares();
+};
+
 window.addEventListener("webviewerloaded", async (event: any) => {
     const contentWindow = event?.detail?.source;
     const doc = contentWindow.document;
