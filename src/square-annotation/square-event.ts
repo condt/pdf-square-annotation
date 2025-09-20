@@ -1,5 +1,7 @@
+import { utils } from "@/utils/util.js";
 import { log } from "../utils/log.js";
 import { SquareAnnotation } from "./core.js";
+import { getNumberId } from "./util.js";
 
 /**
  * 矩形のmousedown処理
@@ -16,6 +18,12 @@ const mouseDown = (that: SquareAnnotation, squareId: string) => {
 
                 // moving stateを設定する(矩形作成も禁止される)
                 stateManager.setMoveReadyState(squareId, e.offsetX, e.offsetY);
+
+                // dispatch to parent
+                utils.dispatchEvent("mousedown-square", {
+                    id: getNumberId(squareId),
+                    state: "normal",
+                });
             } else {
                 // lockedの場合はlayerのmousedownを発火させないようにする(矩形の新規作成を防止)
                 stateManager.layerMouseDownPropagation = true;

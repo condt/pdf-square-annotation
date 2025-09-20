@@ -1,7 +1,7 @@
 import { SquareState } from "@/square-annotation/style/square-style";
 import { SquareProps } from "@/square-annotation/types/square";
 
-type DispatchType = "change-square" | "dblclick-square";
+type DispatchType = "change-square" | "dblclick-square" | "mousedown-square";
 type ChangeSquareType = "create" | "delete" | "resize" | "move";
 type ChangeSquareTrigger = "operation" | "undo" | "redo";
 
@@ -9,7 +9,9 @@ type DispatchDetail<T> = T extends "change-square"
     ? ChangeSquareEvent
     : T extends "dblclick-square"
       ? DoubleClickSquareEvent
-      : {};
+      : T extends "mousedown-square"
+        ? MouseDownSquareEvent
+        : {};
 
 export interface ChangeSquareEvent {
     type: ChangeSquareType;
@@ -20,6 +22,11 @@ export interface ChangeSquareEvent {
 }
 
 export interface DoubleClickSquareEvent {
+    id: number;
+    state: SquareState;
+}
+
+export interface MouseDownSquareEvent {
     id: number;
     state: SquareState;
 }

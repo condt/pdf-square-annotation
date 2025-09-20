@@ -9,14 +9,15 @@ const mouseDown = (that: SquareAnnotation) => {
     const stateManager = that.editStateManager;
 
     return (e: MouseEvent) => {
-        // ドラッグ時に他の矩形の上をカーソル表示させる
-        changeSquarePointerEvents("none");
-
         if (stateManager.layerMouseDownPropagation) {
             // layerイベントを発火させない場合(lockedをmousedownした場合)
             stateManager.layerMouseDownPropagation = false;
             return;
         }
+
+        // ドラッグ時に他の矩形の上をカーソル表示させる
+        changeSquarePointerEvents("none");
+
         if (stateManager.canCreate()) {
             // 矩形作成開始
             const annotationLayer = e.target as HTMLElement;

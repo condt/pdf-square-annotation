@@ -36,6 +36,13 @@ window.addEventListener("dblclick-square", (e) => {
     console.log(e.detail);
 });
 
+// edit modeで矩形mousedown時に発火するイベント
+window.addEventListener("mousedown-square", (e) => {
+    console.log("==mousedown-square==");
+    console.log(e.type);
+    console.log(e.detail);
+});
+
 window.lockAnnotations = () => {
     const iframe = document.getElementById("pdfjs");
     iframe.contentWindow.lockAnnotations({ annotationIds: [1, 2, 4] });
