@@ -475,8 +475,12 @@ export class SquareAnnotation extends SquareAnnotationBase {
                 });
             } else if (square.operation === "modify") {
                 this.refreshTargetSquare(Context.document.getElementById(square.id), square.props, "modify", "redo");
+                this.updateCurrentSquares("modify", this.copySquareData(square));
             } else if (square.operation === "delete") {
                 this.refreshTargetSquare(square.id, square.props, "delete", "redo");
+
+                // update current data
+                this.deleteCurrentSquare(square.id);
 
                 // dispatch to parent
                 utils.dispatchEvent("change-square", {
