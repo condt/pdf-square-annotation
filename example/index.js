@@ -23,6 +23,7 @@ window.init = async () => {
 };
 
 window.addEventListener("change-square", (e) => {
+    console.log("==change square==");
     console.log(e.type);
     console.log(e.detail);
 });

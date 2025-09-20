@@ -335,7 +335,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
                 // dispatch to parent
                 utils.dispatchEvent("change-square", {
                     type: "delete",
-                    trigger: "operation",
+                    trigger: "undo",
                     id: getNumberId(currentSquare.id),
                     pageNumber: currentSquare.pageNumber,
                 });
@@ -370,7 +370,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
                     // dispatch to parent
                     utils.dispatchEvent("change-square", {
                         type: "create",
-                        trigger: "operation",
+                        trigger: "undo",
                         id: getNumberId(currentSquare.id),
                         pageNumber: currentSquare.pageNumber,
                         props: copied.props,
@@ -468,7 +468,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
                 // dispatch to parent
                 utils.dispatchEvent("change-square", {
                     type: "create",
-                    trigger: "operation",
+                    trigger: "redo",
                     id: getNumberId(square.id),
                     pageNumber: square.pageNumber,
                     props: square.props,
@@ -485,7 +485,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
                 // dispatch to parent
                 utils.dispatchEvent("change-square", {
                     type: "delete",
-                    trigger: "operation",
+                    trigger: "redo",
                     id: getNumberId(square.id),
                     pageNumber: square.pageNumber,
                     props: square.props,
