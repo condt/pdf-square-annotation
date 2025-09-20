@@ -8,6 +8,7 @@ import { AppQueryParameters } from "./utils/parameters.js";
 
 import type { ExportData } from "./square-annotation/types/square.js";
 import type { AppConfigType } from "./types/app-config.js";
+import { LockAnnotationsArgs } from "./types/lock.js";
 
 Context.params = new AppQueryParameters();
 Context.config = new AppConfig();
@@ -68,6 +69,13 @@ window.exportAnnotations = () => {
  */
 window.importAnnotations = async () => {
     await Context.squareAnnotation.importData();
+};
+
+/**
+ * 指定したアノテーションをlock状態にする
+ */
+window.lockAnnotations = (args: LockAnnotationsArgs) => {
+    Context.squareAnnotation.lockAnnotations(args);
 };
 
 window.addEventListener("webviewerloaded", async (event: any) => {

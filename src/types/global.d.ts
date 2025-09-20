@@ -1,5 +1,6 @@
 import { ExportData } from "../square-annotation/types/square.js";
 import { AppConfigType } from "./app-config.js";
+import { LockAnnotationsArgs } from "./lock.js";
 
 export {};
 
@@ -48,4 +49,19 @@ declare global {
      * ファイルを選択して矩形データをインポートする
      */
     function importAnnotations(): void;
+
+    /**
+     * 矩形の新規作成を禁止する
+     */
+    function disallowCreateNew(): void;
+
+    /**
+     * 矩形の新規作成を許可する
+     */
+    function allowCreateNew(): void;
+
+    /**
+     * 指定したアノテーションをlock状態にする
+     */
+    function lockAnnotations(args: LockAnnotationsArgs): void;
 }

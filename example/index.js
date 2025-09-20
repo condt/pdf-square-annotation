@@ -27,6 +27,16 @@ window.addEventListener("change-square", (e) => {
     console.log(e.detail);
 });
 
+window.lockAnnotations = () => {
+    const iframe = document.getElementById("pdfjs");
+    iframe.contentWindow.lockAnnotations({ annotationIds: [1, 2, 4] });
+};
+
+window.unlockAnnotations = () => {
+    const iframe = document.getElementById("pdfjs");
+    iframe.contentWindow.lockAnnotations({ annotationIds: [] });
+};
+
 const config = {
     squareAnnotation: {
         SquareStyle: {

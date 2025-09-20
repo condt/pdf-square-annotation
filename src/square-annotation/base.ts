@@ -48,6 +48,8 @@ export abstract class SquareAnnotationBase {
 
         try {
             this.mode = "edit";
+
+            // NOTE: ここでreadyにするので、ダブルクリックで編集モードにした場合はsetEditMode実行後にsetSelectStateする
             this.editStateManager.setReadyState();
 
             this.renderAllPages();
@@ -69,12 +71,10 @@ export abstract class SquareAnnotationBase {
 
         try {
             this.mode = "preview";
-            this.editStateManager.setReadyState();
+            this.unselectSquare(this.editStateManager.selectSquareId);
 
             this.renderAllPages();
             this.setSquareDoubleClick();
-            this.removeResizeHandler();
-            this.removeDeleteIcon();
         } catch (err) {
             // エラー時はモードを戻す
             this.mode = currentMode;
@@ -121,7 +121,11 @@ export abstract class SquareAnnotationBase {
             // スクロールで矩形が消えていたら再描画する
             log.debug("描画します: ", pageNumber);
             pageSquares.forEach((square) => {
-                this.createSquareSection(square.id, annotationLayer, square.props);
+                const squareElement = this.createSquareSection(square.id, annotationLayer, square.props);
+                if (this.editStateManager.isSelect(square.id)) {
+                    // 再描画した矩形が選択状態の場合は選択状態スタイルにする
+                    this.selectSquare(squareElement);
+                }
             });
         }
 
@@ -212,11 +216,6 @@ export abstract class SquareAnnotationBase {
     }
 
     /**
-     * 既に存在する矩形のresizeを行う
-     */
-    abstract drawResizeHandler(id: string): void;
-
-    /**
      * 矩形の作成、リサイズを可能にする
      */
     abstract enableEditSquare(layer: HTMLElement): void;
@@ -243,12 +242,13 @@ export abstract class SquareAnnotationBase {
     abstract setSquareEvent(square: HTMLElement): void;
 
     /**
-     * resize handlerを消す
+     * ### 矩形を選択状態にする
+     * 実行前に選択可能か判定すること
      */
-    abstract removeResizeHandler(): void;
+    abstract selectSquare(square: string | HTMLElement): void;
 
     /**
-     * 削除アイコンを消す
+     * 選択状態をクリアする
      */
-    abstract removeDeleteIcon(): void;
+    abstract unselectSquare(id: string): void;
 }

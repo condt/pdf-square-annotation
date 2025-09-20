@@ -17,6 +17,8 @@ export type EditingState =
 
 export type Position = "top-left" | "top-right" | "bottom-left" | "bottom-right";
 
+export type Square = string | HTMLElement;
+
 export type StackOperation = "create" | "modify" | "delete";
 
 export interface ExportData {

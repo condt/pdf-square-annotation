@@ -1,15 +1,21 @@
+import { SQUARE_MIN_SIZE } from "@/square-annotation/style/settings.js";
+import { AnnotationContext } from "@/utils/context/annotation.js";
 import { Context } from "../utils/context.js";
 import { log } from "../utils/log.js";
-import { SQUARE_BACK_COLOR, SQUARE_MIN_SIZE } from "@/square-annotation/style/settings.js";
 import { EditingState } from "./types/square.js";
 
 export class EditStateManager {
     private _state: EditingState = "ready";
 
     /**
+     * layerのmousedownを発火させないためのフラグ
+     */
+    layerMouseDownPropagation = false;
+
+    /**
      * 現在選択中の矩形要素
      */
-    private selectSquareId: string = null;
+    selectSquareId: string = null;
 
     private draggingResizeHandlerId: string = null;
     private resizeStartSquareWidth = null;
@@ -38,7 +44,7 @@ export class EditStateManager {
             this.setReadyState();
         } else {
             // 選択中に作成した場合は選択中に戻す
-            this.setSelectState();
+            this.restoreSelectState();
         }
     }
 
@@ -53,7 +59,7 @@ export class EditStateManager {
                 resizeSquare.style.height = this.resizeStartSquareHeight;
             }
             // 選択中に戻す
-            this.setSelectState(null);
+            this.restoreSelectState();
         }
     }
 
@@ -87,30 +93,43 @@ export class EditStateManager {
     }
 
     /**
-     * ### 矩形選択状態にする
-     * 選択状態になったらtrueを返す
+     * ### resize move完了時, create resizeキャンセル時に実行する
+     * 上記状態は"select-square"状態じゃないけどselectSquareIdは設定されている状態  \
+     * ※createの完了時は普通にsetSelectStateで選択する  \
+     * ※moveのキャンセルはない(マウスが範囲外に出たらその時点でmove完了になる)
      */
-    setSelectState(newSelectSquareId?: string) {
-        if (newSelectSquareId == null) {
-            if (this.selectSquareId == null) {
-                throw "selectSquareId is null: 矩形選択状態で実行してください";
-            } else {
-                // 今選択中のを選択している状態にする
-                this.initParams();
-                this._state = "select-square";
-                return true;
-            }
+    restoreSelectState() {
+        if (this.selectSquareId == null) {
+            throw "selectSquareId is null: 矩形選択状態で実行してください";
+        } else {
+            // 選択状態にする
+            this.initParams();
+            this._state = "select-square";
         }
+    }
 
-        // 既に同じ矩形をresize選択している場合は何もしない
-        if (this.state === "select-square" && this.selectSquareId === newSelectSquareId) {
+    /**
+     * ### 選択可能ならtrueを返す
+     * lockedのみ判定する  \
+     * 既に選択状態かどうかは判定しない
+     */
+    canSelectSquare(selectId: string) {
+        if (AnnotationContext.isLocked(selectId)) {
+            // lockされている矩形は選択不可
             return false;
         }
 
+        return true;
+    }
+
+    /**
+     * ### 矩形選択状態にする
+     * **実行前に選択できるかcanSelectSquareでチェックすること**  \
+     */
+    setSelectState(newSelectSquareId: string) {
         this.initParams();
         this.selectSquareId = newSelectSquareId;
         this._state = "select-square";
-        return true;
     }
 
     /**
@@ -129,9 +148,6 @@ export class EditStateManager {
 
         // NOTE: これがないと縮小時に挙動がおかしくなる
         createSquare.style.pointerEvents = "none";
-
-        // TODO: set default/config style
-        createSquare.style.backgroundColor = SQUARE_BACK_COLOR;
 
         this.initParams();
         this.createStartX = createStartX;
@@ -224,7 +240,7 @@ export class EditStateManager {
     /**
      * 現在選択中の矩形要素を返す
      */
-    getSelectingSquare() {
+    getSelectingSquare(): HTMLElement {
         const square = Context.document.getElementById(this.selectSquareId);
         if (square == null) {
             throw `select square not found, id=${this.selectSquareId}`;
@@ -251,6 +267,13 @@ export class EditStateManager {
      * 矩形の新規作成が可能な状態ならtrueを返す
      */
     canCreate() {
+        return this.state === "ready" || this.state === "select-square";
+    }
+
+    /**
+     * 矩形の移動が可能な状態ならtrueを返す
+     */
+    canMove() {
         return this.state === "ready" || this.state === "select-square";
     }
 }

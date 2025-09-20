@@ -12,6 +12,11 @@ const mouseDown = (that: SquareAnnotation) => {
         // ドラッグ時に他の矩形の上をカーソル表示させる
         changeSquarePointerEvents("none");
 
+        if (stateManager.layerMouseDownPropagation) {
+            // layerイベントを発火させない場合(lockedをmousedownした場合)
+            stateManager.layerMouseDownPropagation = false;
+            return;
+        }
         if (stateManager.canCreate()) {
             // 矩形作成開始
             const annotationLayer = e.target as HTMLElement;
@@ -95,6 +100,7 @@ const mouseLeave = (that: SquareAnnotation) => {
  * 作成を完了する
  */
 const completeCreate = (that: SquareAnnotation) => {
+    // MARK: completeCreate 矩形の作成完了
     const stateManager = that.editStateManager;
 
     // 小さすぎる場合は描画しない
@@ -134,13 +140,13 @@ const completeResize = (that: SquareAnnotation) => {
 
     let square: SquareData = null;
     if (stateManager.state === "resize-dragging") {
-        // サイズを変更した場合のみundo stackに追加
+        // サイズを変更した場合のみ実行
         // percent指定にしてundo stackに追加
         square = that.addUndoStack(stateManager.getSelectingSquare(), "modify");
     }
 
     // 選択状態に戻す
-    stateManager.setSelectState(null);
+    stateManager.restoreSelectState();
 
     if (square != null) {
         // NOTE: 現時点ではresizeはdispatchしない(createとdeleteのみdispatchする)
@@ -171,7 +177,7 @@ const completeMove = (that: SquareAnnotation) => {
     }
 
     // 選択状態に戻す
-    stateManager.setSelectState(null);
+    stateManager.restoreSelectState();
 
     if (square != null) {
         // NOTE: 現時点ではmoveはdispatchしない(createとdeleteのみdispatchする)

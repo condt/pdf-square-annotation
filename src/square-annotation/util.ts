@@ -2,6 +2,17 @@ import { Context } from "../utils/context.js";
 import { log } from "../utils/log.js";
 import { ID_PREFIX } from "./style/settings.js";
 
+import type { Square } from "./types/square.js";
+
+/**
+ * 矩形要素とそのidを返す
+ */
+export const getSquareElement = (square: Square) => {
+    const squareElement = typeof square === "string" ? Context.document.getElementById(square) : square;
+    const squareId = squareElement?.id ?? "";
+    return { squareElement, squareId };
+};
+
 /**
  * ## 要素idから数値のidを取得する
  * @example "square-annotation-1" -> 1
