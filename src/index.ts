@@ -78,6 +78,13 @@ window.lockAnnotations = (args: LockAnnotationsArgs) => {
     Context.squareAnnotation.lockAnnotations(args);
 };
 
+/**
+ * undo stackを空にする
+ */
+window.clearUndoStack = () => {
+    Context.squareAnnotation.clearUndoStack();
+};
+
 // @ts-ignore for debug
 window.showCurrentSquares = () => {
     Context.squareAnnotation.showCurrentSquares();

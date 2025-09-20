@@ -64,4 +64,9 @@ declare global {
      * 指定したアノテーションをlock状態にする
      */
     function lockAnnotations(args: LockAnnotationsArgs): void;
+
+    /**
+     * undo stackを空にする
+     */
+    function clearUndoStack(): void;
 }

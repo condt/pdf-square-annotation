@@ -226,6 +226,12 @@ export class SquareAnnotation extends SquareAnnotationBase {
         }
     }
 
+    clearUndoStack() {
+        this.undoStack = [];
+        this.stackIndex = -1;
+        SquareAnnotationBase.stackId = 1;
+    }
+
     /**
      * ## 操作結果をundo stackに追加する
      * * current dataも更新する
@@ -623,9 +629,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
         getAllSquares().forEach((square) => square.remove());
 
         // reset undo stack
-        this.undoStack = [];
-        this.stackIndex = -1;
-        SquareAnnotationBase.stackId = 1;
+        this.clearUndoStack();
 
         // 次の矩形idをimport dataから決める
         generator.squareId.updateNextId(data.squares.map((s) => s.id));

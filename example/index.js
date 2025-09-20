@@ -58,6 +58,11 @@ window.showCurrentSquares = () => {
     iframe.contentWindow.showCurrentSquares();
 };
 
+window.clearUndoStack = () => {
+    const iframe = document.getElementById("pdfjs");
+    iframe.contentWindow.clearUndoStack();
+};
+
 const config = {
     squareAnnotation: {
         SquareStyle: {
