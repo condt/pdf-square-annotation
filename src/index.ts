@@ -79,6 +79,20 @@ window.lockAnnotations = (args: LockAnnotationsArgs) => {
 };
 
 /**
+ * 矩形の新規作成を禁止する
+ */
+window.disallowCreateNew = () => {
+    Context.squareAnnotation.disallowCreateNew();
+};
+
+/**
+ * 矩形の新規作成を許可する
+ */
+window.allowCreateNew = () => {
+    Context.squareAnnotation.allowCreateNew();
+};
+
+/**
  * undo stackを空にする
  */
 window.clearUndoStack = () => {

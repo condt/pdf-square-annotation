@@ -2,7 +2,7 @@ import { Context } from "../utils/context.js";
 import { log } from "../utils/log.js";
 import { EditStateManager } from "./edit-state-manager.js";
 import { COURSOR_STYLE } from "./style/settings.js";
-import { changeSelected } from "./style/toolbar.js";
+import { changeToolbarSelected } from "./style/toolbar.js";
 
 import type { Mode, SquareData, SquareProps, UndoStackTask } from "./types/square.js";
 
@@ -62,7 +62,7 @@ export abstract class SquareAnnotationBase {
         }
 
         // change toolbar button style
-        changeSelected(this.mode);
+        changeToolbarSelected(this.mode);
     }
 
     setPreviewMode() {
@@ -83,7 +83,7 @@ export abstract class SquareAnnotationBase {
         }
 
         // change toolbar button style
-        changeSelected(this.mode);
+        changeToolbarSelected(this.mode);
     }
 
     renderAllPages() {
@@ -176,7 +176,7 @@ export abstract class SquareAnnotationBase {
 
         if (this.mode === "edit") {
             // ====================編集モード====================
-            layer.style.cursor = COURSOR_STYLE.CAN_CREATE;
+            layer.style.cursor = this.editStateManager.allowCreateNew ? COURSOR_STYLE.CAN_CREATE : null;
             layer.style.pointerEvents = "auto";
             this.enableEditSquare(layer);
         } else {

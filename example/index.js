@@ -53,14 +53,24 @@ window.unlockAnnotations = () => {
     iframe.contentWindow.lockAnnotations({ annotationIds: [] });
 };
 
-window.showCurrentSquares = () => {
-    const iframe = document.getElementById("pdfjs");
-    iframe.contentWindow.showCurrentSquares();
-};
-
 window.clearUndoStack = () => {
     const iframe = document.getElementById("pdfjs");
     iframe.contentWindow.clearUndoStack();
+};
+
+window.allowCreateNew = () => {
+    const iframe = document.getElementById("pdfjs");
+    iframe.contentWindow.allowCreateNew();
+};
+
+window.disallowCreateNew = () => {
+    const iframe = document.getElementById("pdfjs");
+    iframe.contentWindow.disallowCreateNew();
+};
+
+window.showCurrentSquares = () => {
+    const iframe = document.getElementById("pdfjs");
+    iframe.contentWindow.showCurrentSquares();
 };
 
 const config = {

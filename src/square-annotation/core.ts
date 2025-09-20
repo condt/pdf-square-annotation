@@ -794,4 +794,30 @@ export class SquareAnnotation extends SquareAnnotationBase {
         const elem = Context.document.getElementById("square-delete-icon");
         if (elem != null) elem.remove();
     }
+
+    /**
+     * 矩形の新規作成を許可する
+     */
+    allowCreateNew() {
+        this.editStateManager.allowCreateNew = true;
+        Context.pdfManager.getPages().forEach((page) => {
+            const layer = Context.pdfManager.getAnnotationLayer(page);
+            if (layer != null) {
+                layer.style.cursor = COURSOR_STYLE.CAN_CREATE;
+            }
+        });
+    }
+
+    /**
+     * 矩形の新規作成を禁止する
+     */
+    disallowCreateNew() {
+        this.editStateManager.allowCreateNew = false;
+        Context.pdfManager.getPages().forEach((page) => {
+            const layer = Context.pdfManager.getAnnotationLayer(page);
+            if (layer != null) {
+                layer.style.cursor = null;
+            }
+        });
+    }
 }

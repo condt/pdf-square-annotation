@@ -3,7 +3,7 @@ import { Mode } from "@/square-annotation/types/square";
 /**
  * toolbarのスタイルを変える
  */
-export const changeSelected = (currentMode: Mode) => {
+export const changeToolbarSelected = (currentMode: Mode) => {
     document.querySelectorAll(".mode-button").forEach((button) => {
         button.classList.remove("selected");
     });

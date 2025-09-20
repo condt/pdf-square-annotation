@@ -8,6 +8,11 @@ export class EditStateManager {
     private _state: EditingState = "ready";
 
     /**
+     * falseなら矩形の新規作成不可
+     */
+    allowCreateNew = true;
+
+    /**
      * layerのmousedownを発火させないためのフラグ
      */
     layerMouseDownPropagation = false;
@@ -267,7 +272,9 @@ export class EditStateManager {
      * 矩形の新規作成が可能な状態ならtrueを返す
      */
     canCreate() {
-        return this.state === "ready" || this.state === "select-square";
+        const stateOk = this.state === "ready" || this.state === "select-square";
+        const allowCreate = this.allowCreateNew;
+        return stateOk && allowCreate;
     }
 
     /**
