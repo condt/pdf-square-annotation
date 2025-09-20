@@ -22,8 +22,16 @@ window.init = async () => {
     await iframe.contentWindow.openPdf(bin);
 };
 
+// 作成・削除時に発火するイベント
 window.addEventListener("change-square", (e) => {
-    console.log("==change square==");
+    console.log("==change-square==");
+    console.log(e.type);
+    console.log(e.detail);
+});
+
+// preview modeで矩形ダブルクリック時に発火するイベント
+window.addEventListener("dblclick-square", (e) => {
+    console.log("==dblclick-square==");
     console.log(e.type);
     console.log(e.detail);
 });

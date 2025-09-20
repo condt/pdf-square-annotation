@@ -202,14 +202,23 @@ export class SquareAnnotation extends SquareAnnotationBase {
                             e.stopPropagation();
                             log.debug(`${el.id}を選択しました`, el);
 
-                            // 矩形選択状態にする
-                            if (this.editStateManager.canSelectSquare(el.id)) {
-                                // 編集モードにする
-                                this.setEditMode();
-                                // 選択状態にする
-                                this.selectSquare(el.id);
-                                return;
-                            }
+                            const isLocked = AnnotationContext.isLocked(el.id);
+
+                            // dispatch to parent
+                            utils.dispatchEvent("dblclick-square", {
+                                id: getNumberId(el.id),
+                                state: isLocked ? "locked" : "normal",
+                            });
+                            return;
+
+                            // ダブルクリックで編集モードにする処理
+                            // if (this.editStateManager.canSelectSquare(el.id)) {
+                            //     // 編集モードにする
+                            //     this.setEditMode();
+                            //     // 選択状態にする
+                            //     this.selectSquare(el.id);
+                            //     return;
+                            // }
                         }
                     }
                 }
