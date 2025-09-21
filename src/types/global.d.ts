@@ -38,6 +38,7 @@ declare global {
     function getAnnotations(): ExportData;
 
     function undo(): void;
+
     function redo(): void;
 
     /**
@@ -69,4 +70,9 @@ declare global {
      * undo stackを空にする
      */
     function clearUndoStack(): void;
+
+    /**
+     * 矩形の位置にスクロールする
+     */
+    function scrollToSquare(id: number): void;
 }

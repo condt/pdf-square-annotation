@@ -100,6 +100,13 @@ window.clearUndoStack = () => {
     Context.squareAnnotation.clearUndoStack();
 };
 
+/**
+ * 矩形の位置にスクロールする
+ */
+window.scrollToSquare = (id: number) => {
+    Context.squareAnnotation.scrollToSquare(id);
+};
+
 // @ts-ignore for debug
 window.showCurrentSquares = () => {
     Context.squareAnnotation.showCurrentSquares();

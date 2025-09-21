@@ -888,4 +888,47 @@ export class SquareAnnotation extends SquareAnnotationBase {
             }
         });
     }
+
+    /**
+     * 矩形の位置にスクロールする
+     */
+    scrollToSquare(id: number) {
+        const viewer = Context.document.getElementById("viewerContainer");
+        if (viewer == null) return;
+
+        const strId = getStrId(id);
+        const square = this.currentSquares.find((s) => s.id === strId);
+        if (square == null) return;
+
+        const page = Context.pdfManager.getPage(square.pageNumber);
+        if (page == null) return;
+
+        const { y } = page.getBoundingClientRect();
+
+        // page上部にスクロール
+        viewer.scroll(0, y + viewer.scrollTop);
+
+        // 矩形にスクロール
+        this._scrollToSquare(viewer, strId, 0);
+    }
+
+    /**
+     * ### 矩形の位置にスクロールする
+     * 矩形がまだレンダリングされてない場合は1ms後に再度実行する
+     */
+    private _scrollToSquare(viewer: HTMLElement, strId: string, count: number) {
+        // 1秒以上経過しても矩形がレンダリングされなければ中断する
+        if (count > 1000) return;
+
+        const squareElement = Context.document.getElementById(strId);
+        if (squareElement == null) {
+            setTimeout(() => {
+                // 矩形がまだレンダリングされてないなら1ms後に再度実行
+                this._scrollToSquare(viewer, strId, count + 1);
+            }, 1);
+        } else {
+            const { y: sy } = squareElement.getBoundingClientRect();
+            viewer.scrollTo({ top: viewer.scrollTop + sy - 50, behavior: "smooth" });
+        }
+    }
 }

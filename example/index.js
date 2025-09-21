@@ -68,6 +68,11 @@ window.disallowCreateNew = () => {
     iframe.contentWindow.disallowCreateNew();
 };
 
+window.scrollToSquare = (id) => {
+    const iframe = document.getElementById("pdfjs");
+    iframe.contentWindow.scrollToSquare(id);
+};
+
 window.setAppConfig = () => {
     const iframe = document.getElementById("pdfjs");
     iframe.contentWindow.setAppConfig(config);
