@@ -2,19 +2,23 @@
 demo page  
 https://condt.github.io/pdf-square-annotation/demo.html  
 
-![demo](./demo.gif)
+![demo](./demo.png)
+
+# Example
+```sh
+npm run dev
+```
+
+# API
+see [global.d.ts](./src/types/global.d.ts)
 
 # Features
 * draw/edit square annotation
 * undo/redo
 * export squares(JSON)
 * import squares(JSON)
-
-# Usage Example
-1. serve repository root
-2. open `/demo.html`
-
-See the example directory for details.
+* lock squares
+* scroll to square
 
 # How to install in your project
 Copy the following into your project.

@@ -4,13 +4,6 @@ import { LockAnnotationsArgs } from "./lock.js";
 
 export {};
 
-declare global {
-    /**
-     * CSS Properties
-     */
-    type CSSStyle = Partial<CSSStyleDeclaration>;
-}
-
 /**
  * public API
  */
