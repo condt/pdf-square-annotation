@@ -57,16 +57,16 @@ export class SquareAnnotation extends SquareAnnotationBase {
         this.removeResizeHandler();
 
         // resize handler作成
-        this.createDragHandlerElement(squareElement, "top-left");
-        this.createDragHandlerElement(squareElement, "top-right");
-        this.createDragHandlerElement(squareElement, "bottom-left");
-        this.createDragHandlerElement(squareElement, "bottom-right");
+        this.createResizeHandlerElement(squareElement, "top-left");
+        this.createResizeHandlerElement(squareElement, "top-right");
+        this.createResizeHandlerElement(squareElement, "bottom-left");
+        this.createResizeHandlerElement(squareElement, "bottom-right");
     }
 
     /**
      * resize handlerを作成してsquareに付与する
      */
-    private createDragHandlerElement(square: HTMLElement, position: Position) {
+    private createResizeHandlerElement(square: HTMLElement, position: Position) {
         const config = Context.config.getConfig();
         const backgroundColor = config.squareAnnotation.resizeHandlerStyle.backgroundColor;
         const borderRadius = config.squareAnnotation.resizeHandlerStyle.borderRadius;
@@ -743,6 +743,45 @@ export class SquareAnnotation extends SquareAnnotationBase {
     }
 
     /**
+     * resize handlerのスタイルを更新する
+     */
+    setResizeHandlerStyle() {
+        this.setResizeHandlerStyleWithPosition("top-left");
+        this.setResizeHandlerStyleWithPosition("top-right");
+        this.setResizeHandlerStyleWithPosition("bottom-left");
+        this.setResizeHandlerStyleWithPosition("bottom-right");
+    }
+
+    setResizeHandlerStyleWithPosition(position: Position) {
+        const config = Context.config.getConfig();
+        const backgroundColor = config.squareAnnotation.resizeHandlerStyle.backgroundColor;
+        const borderRadius = config.squareAnnotation.resizeHandlerStyle.borderRadius;
+        const size = config.squareAnnotation.resizeHandlerStyle.size;
+        const positionPixel = config.squareAnnotation.resizeHandlerStyle.position;
+
+        const id = this.getSquareHandlerId(position);
+        const handler = Context.document.getElementById(id);
+        handler.style.width = size;
+        handler.style.height = size;
+        handler.style.backgroundColor = backgroundColor;
+        handler.style.borderRadius = borderRadius;
+
+        if (position === "top-left") {
+            handler.style.left = positionPixel;
+            handler.style.top = positionPixel;
+        } else if (position === "bottom-left") {
+            handler.style.left = positionPixel;
+            handler.style.bottom = positionPixel;
+        } else if (position === "top-right") {
+            handler.style.right = positionPixel;
+            handler.style.top = positionPixel;
+        } else if (position === "bottom-right") {
+            handler.style.right = positionPixel;
+            handler.style.bottom = positionPixel;
+        }
+    }
+
+    /**
      * ### 矩形を選択状態にする
      * 実行前に選択可能か判定すること
      */
@@ -802,7 +841,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
         if (squareId == null) return;
 
         // 選択状態スタイルを消す
-        setSquareStyle(squareId, getSquareState(squareId), false);
+        setSquareStyle(squareId, getSquareState(squareId));
     }
 
     private removeResizeHandler() {

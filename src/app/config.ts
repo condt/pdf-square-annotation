@@ -9,6 +9,7 @@ import {
     SQUARE_LOCKED_BACK_COLOR,
     SQUARE_SELECTED_BORDER,
 } from "@/square-annotation/style/settings.js";
+import { Context } from "@/utils/context.js";
 
 /**
  * デフォルトの設定値
@@ -49,11 +50,20 @@ export class AppConfig {
     }
 
     setConfig(config: AppConfigType) {
+        // 設定を更新
         this.mergeConfig(config);
+
+        // ツールバーボタンの表示を即反映
         toggleToolbarButton({
             exportButton: this.config.toolbar.exportButton,
             importButton: this.config.toolbar.importButton,
         });
+
+        // 矩形のスタイルを反映する
+        Context.squareAnnotation.setAllSquaresStyle();
+
+        // resize handlerのスタイルを反映する
+        Context.squareAnnotation.setResizeHandlerStyle();
     }
 
     /**

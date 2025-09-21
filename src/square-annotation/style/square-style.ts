@@ -42,19 +42,13 @@ const getStyle = (state: SquareState, style?: SupportStyle): SupportStyle => {
 /**
  * 矩形スタイルを設定する
  */
-export const setSquareStyle = (square: string | HTMLElement, state: SquareState, isSelected = false) => {
+export const setSquareStyle = (square: string | HTMLElement, state: SquareState) => {
     const { squareElement } = getSquareElement(square);
     if (squareElement == null) {
         return;
     }
     const style = getStyle(state);
-    console.log("style: ", style);
     __setSquareStyle(squareElement, style);
-    if (isSelected) {
-        const config = Context.config.getConfig();
-        console.log("config.squareAnnotation.selectedStyle: ", config.squareAnnotation.selectedStyle);
-        __setSquareStyle(squareElement, config.squareAnnotation.selectedStyle);
-    }
 };
 
 /**
