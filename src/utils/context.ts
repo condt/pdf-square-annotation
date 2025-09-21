@@ -1,11 +1,13 @@
-import { SquareAnnotation } from "../square-annotation/core.js";
-import { PDFManager } from "../app/pdf-manager.js";
 import { App } from "../app/app.js";
-import { AppQueryParameters } from "./parameters.js";
 import { AppConfig } from "../app/config.js";
+import { PDFManager } from "../app/pdf-manager.js";
+import { SquareAnnotation } from "../square-annotation/core.js";
+import { AppQueryParameters } from "./parameters.js";
 
 export class Context {
+    /** PDF.jsのwindow */
     static window: Window;
+    /** PDF.jsのdocument */
     static document: Document;
     static PDFViewerApplication: any;
     static pdfjs: any;

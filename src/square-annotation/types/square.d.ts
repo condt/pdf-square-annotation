@@ -1,4 +1,4 @@
-import { SupportStyle } from "../style/square-style.js";
+import { SquareState } from "../style/square-style";
 
 export type Mode = "preview" | "edit";
 
@@ -17,6 +17,8 @@ export type EditingState =
 
 export type Position = "top-left" | "top-right" | "bottom-left" | "bottom-right";
 
+export type Square = string | HTMLElement;
+
 export type StackOperation = "create" | "modify" | "delete";
 
 export interface ExportData {
@@ -31,12 +33,16 @@ export interface SquareData extends SquareBase {
 export interface ExportSquareData extends SquareBase {
     /** square要素のid */
     id: number;
+    state: SquareState;
 }
 
 export interface SquareBase {
     /** page番号 */
     pageNumber: number;
-    /** スタイルなどのプロパティ */
+
+    /**
+     * 位置情報(delete stackでは保持しない)
+     */
     props?: SquareProps;
 }
 
@@ -48,7 +54,6 @@ export interface SquareProps {
     y: number;
     width: number;
     height: number;
-    style: SupportStyle;
 }
 
 export interface SquareOperation extends SquareData {

@@ -2,7 +2,7 @@ import { Context } from "../utils/context.js";
 import { log } from "../utils/log.js";
 import { EditStateManager } from "./edit-state-manager.js";
 import { COURSOR_STYLE } from "./style/settings.js";
-import { changeSelected } from "./style/toolbar.js";
+import { changeToolbarSelected } from "./style/toolbar.js";
 
 import type { Mode, SquareData, SquareProps, UndoStackTask } from "./types/square.js";
 
@@ -48,6 +48,8 @@ export abstract class SquareAnnotationBase {
 
         try {
             this.mode = "edit";
+
+            // NOTE: ここでreadyにするので、ダブルクリックで編集モードにした場合はsetEditMode実行後にsetSelectStateする
             this.editStateManager.setReadyState();
 
             this.renderAllPages();
@@ -60,7 +62,7 @@ export abstract class SquareAnnotationBase {
         }
 
         // change toolbar button style
-        changeSelected(this.mode);
+        changeToolbarSelected(this.mode);
     }
 
     setPreviewMode() {
@@ -69,12 +71,10 @@ export abstract class SquareAnnotationBase {
 
         try {
             this.mode = "preview";
-            this.editStateManager.setReadyState();
+            this.unselectSquare(this.editStateManager.selectSquareId);
 
             this.renderAllPages();
             this.setSquareDoubleClick();
-            this.removeResizeHandler();
-            this.removeDeleteIcon();
         } catch (err) {
             // エラー時はモードを戻す
             this.mode = currentMode;
@@ -83,7 +83,7 @@ export abstract class SquareAnnotationBase {
         }
 
         // change toolbar button style
-        changeSelected(this.mode);
+        changeToolbarSelected(this.mode);
     }
 
     renderAllPages() {
@@ -121,7 +121,11 @@ export abstract class SquareAnnotationBase {
             // スクロールで矩形が消えていたら再描画する
             log.debug("描画します: ", pageNumber);
             pageSquares.forEach((square) => {
-                this.createSquareSection(square.id, annotationLayer, square.props);
+                const squareElement = this.createSquareSection(square.id, annotationLayer, square.props);
+                if (this.editStateManager.isSelect(square.id)) {
+                    // 再描画した矩形が選択状態の場合は選択状態スタイルにする
+                    this.selectSquare(squareElement);
+                }
             });
         }
 
@@ -172,7 +176,7 @@ export abstract class SquareAnnotationBase {
 
         if (this.mode === "edit") {
             // ====================編集モード====================
-            layer.style.cursor = COURSOR_STYLE.CAN_CREATE;
+            layer.style.cursor = this.editStateManager.allowCreateNew ? COURSOR_STYLE.CAN_CREATE : null;
             layer.style.pointerEvents = "auto";
             this.enableEditSquare(layer);
         } else {
@@ -212,9 +216,14 @@ export abstract class SquareAnnotationBase {
     }
 
     /**
-     * 既に存在する矩形のresizeを行う
+     * for debug
      */
-    abstract drawResizeHandler(id: string): void;
+    showCurrentSquares() {
+        log.debug("==currentSquares==");
+        log.debug(this.currentSquares);
+        log.debug("==undoStack==");
+        log.debug(this.undoStack);
+    }
 
     /**
      * 矩形の作成、リサイズを可能にする
@@ -243,12 +252,13 @@ export abstract class SquareAnnotationBase {
     abstract setSquareEvent(square: HTMLElement): void;
 
     /**
-     * resize handlerを消す
+     * ### 矩形を選択状態にする
+     * 実行前に選択可能か判定すること
      */
-    abstract removeResizeHandler(): void;
+    abstract selectSquare(square: string | HTMLElement): void;
 
     /**
-     * 削除アイコンを消す
+     * 選択状態をクリアする
      */
-    abstract removeDeleteIcon(): void;
+    abstract unselectSquare(id: string): void;
 }

@@ -30,7 +30,7 @@
 .toolbar-button:first-child {
     margin-left: 0px;
 }
-.toolbar-button:hover {
+.toolbar-button:not(.disable):hover {
     cursor: pointer;
     background-color: rgb(100, 100, 100);
 }

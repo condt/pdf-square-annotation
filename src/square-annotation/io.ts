@@ -1,8 +1,6 @@
 import { ExportData, ExportSquareData, SquareData, SquareProps } from "@/square-annotation/types/square";
-import { SupportStyle } from "./style/square-style";
-import { SQUARE_BACK_COLOR } from "./style/settings";
-
-const ID_PREFIX = "square-annotation-";
+import { AnnotationContext } from "@/utils/context/annotation";
+import { getNumberId, getSquareState, getStrId } from "./util";
 
 export const checkImportData = (squares: SquareData[], pagesCount: number) => {
     squares.forEach((s) => {
@@ -23,10 +21,21 @@ export const createCurrentData = (exportData: ExportData): SquareData[] => {
  * exportデータを内部データ形式に変換する
  */
 const toCurrentData = (squares: ExportSquareData[]): SquareData[] => {
-    return squares.map((s) => ({
-        ...s,
-        id: getStrId(s.id),
-    }));
+    AnnotationContext.lockAnnotationIds = [];
+    return squares.map((s) => {
+        const id = getStrId(s.id);
+        if (s.state === "locked") {
+            AnnotationContext.lockAnnotationIds.push(id);
+        }
+
+        // stateプロパティは不要なので消す
+        delete s.state;
+
+        return {
+            ...s,
+            id,
+        };
+    });
 };
 
 /**
@@ -42,6 +51,7 @@ export const createExportData = (squares: SquareData[]): ExportData => {
 const toExportSquares = (squares: SquareData[]): ExportSquareData[] => {
     return squares.map((d) => ({
         id: getNumberId(d.id),
+        state: getSquareState(d.id),
         pageNumber: d.pageNumber,
         props: getStyleProps(d.props),
     }));
@@ -53,33 +63,5 @@ const getStyleProps = (props?: SquareProps): SquareProps => {
         y: props?.y ?? 0,
         width: props?.width ?? 0,
         height: props?.height ?? 0,
-        style: getSupportStyle(props?.style),
     };
-};
-
-const getSupportStyle = (style?: SupportStyle): SupportStyle => {
-    return {
-        backgroundColor: style?.backgroundColor ?? SQUARE_BACK_COLOR,
-        border: style?.border ?? null,
-    };
-};
-
-/**
- * ## 要素idから数値のidを取得する
- * @example "square-annotation-1" -> 1
- */
-const getNumberId = (id: string) => {
-    const i = parseInt(id.replace(ID_PREFIX, ""));
-    if (isNaN(i)) {
-        throw `getId: ${id} is invalid.`;
-    }
-    return i;
-};
-
-/**
- * ## 数値のidから要素idを返す
- * @example 1 -> "square-annotation-1"
- */
-const getStrId = (id: number) => {
-    return `${ID_PREFIX}${id}`;
 };

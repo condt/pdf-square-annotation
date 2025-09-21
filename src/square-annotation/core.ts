@@ -1,23 +1,36 @@
+import { AnnotationContext } from "@/utils/context/annotation.js";
 import { Context } from "../utils/context.js";
 import { log } from "../utils/log.js";
 import { utils } from "../utils/util.js";
 import { SquareAnnotationBase } from "./base.js";
+import { checkImportData, createCurrentData, createExportData } from "./io.js";
 import { layerEvent } from "./layer-event.js";
 import { resizeHandlerEvent } from "./resize-handler-event.js";
 import { squareEvent } from "./square-event.js";
-import {
-    COURSOR_STYLE,
-    CUSTOM_ANNOTATION_CLASSES,
-    RESIZE_HANDLER_BACK_COLOR,
-    RESIZE_HANDLER_POS,
-    RESIZE_HANDLER_SIZE,
-} from "./style/settings.js";
-import { getSupportStyles } from "./style/square-style.js";
+import { COURSOR_STYLE, CUSTOM_ANNOTATION_CLASSES } from "./style/settings.js";
+import { setSelectSquareStyle, setSquareStyle } from "./style/square-style.js";
 import { DELETE_SVG } from "./style/svg/delete.js";
-import { generator, getAllSquares, setPercentStyle } from "./util.js";
+import {
+    generator,
+    getAllSquares,
+    getNumberId,
+    getSquareElement,
+    getSquareState,
+    getStrId,
+    setPercentStyle,
+} from "./util.js";
 
-import { checkImportData, createCurrentData, createExportData } from "./io.js";
-import type { ExportData, Position, SquareData, SquareOperation, SquareProps, StackOperation } from "./types/square.js";
+import type { LockAnnotationsArgs } from "@/types/lock.js";
+import { changeUndoRedoButtonStyle } from "./style/toolbar.js";
+import type {
+    ExportData,
+    Position,
+    Square,
+    SquareData,
+    SquareOperation,
+    SquareProps,
+    StackOperation,
+} from "./types/square.js";
 
 export class SquareAnnotation extends SquareAnnotationBase {
     /**
@@ -37,85 +50,62 @@ export class SquareAnnotation extends SquareAnnotationBase {
         layer.onmouseleave = layerEvent.mouseLeave(this);
     }
 
-    removeResizeHandler() {
-        const remove = (e: HTMLElement) => {
-            if (e != null) e.remove();
-        };
-        remove(Context.document.getElementById(this.getSquareHandlerId("top-left")));
-        remove(Context.document.getElementById(this.getSquareHandlerId("top-right")));
-        remove(Context.document.getElementById(this.getSquareHandlerId("bottom-left")));
-        remove(Context.document.getElementById(this.getSquareHandlerId("bottom-right")));
-    }
-
-    /**
-     * 削除アイコンを消す
-     */
-    removeDeleteIcon() {
-        const elem = Context.document.getElementById("square-delete-icon");
-        if (elem != null) elem.remove();
-    }
-
     /**
      * 矩形にresize handlerを付与する
      */
-    drawResizeHandler(id: string) {
-        log.debug("draw resize handler", id);
-
-        const squareElement = Context.document.getElementById(id);
-
+    drawResizeHandler(squareElement: HTMLElement) {
         this.removeResizeHandler();
 
         // resize handler作成
-        this.createDragHandlerElement(squareElement, "top-left");
-        this.createDragHandlerElement(squareElement, "top-right");
-        this.createDragHandlerElement(squareElement, "bottom-left");
-        this.createDragHandlerElement(squareElement, "bottom-right");
-
-        this.removeDeleteIcon();
-
-        // 削除アイコン作成
-        this.createDeleteIcon(squareElement);
+        this.createResizeHandlerElement(squareElement, "top-left");
+        this.createResizeHandlerElement(squareElement, "top-right");
+        this.createResizeHandlerElement(squareElement, "bottom-left");
+        this.createResizeHandlerElement(squareElement, "bottom-right");
     }
 
     /**
      * resize handlerを作成してsquareに付与する
      */
-    private createDragHandlerElement(square: HTMLElement, position: Position) {
+    private createResizeHandlerElement(square: HTMLElement, position: Position) {
+        const config = Context.config.getConfig();
+        const backgroundColor = config.squareAnnotation.resizeHandlerStyle.backgroundColor;
+        const borderRadius = config.squareAnnotation.resizeHandlerStyle.borderRadius;
+        const size = config.squareAnnotation.resizeHandlerStyle.size;
+        const positionPixel = config.squareAnnotation.resizeHandlerStyle.position;
+
         const handler = Context.document.createElement("div");
         const id = this.getSquareHandlerId(position);
         handler.id = id;
         handler.style.position = "absolute";
         handler.style.zIndex = "10000000";
-        handler.style.width = RESIZE_HANDLER_SIZE;
-        handler.style.height = RESIZE_HANDLER_SIZE;
+        handler.style.width = size;
+        handler.style.height = size;
+        handler.style.backgroundColor = backgroundColor;
+        handler.style.borderRadius = borderRadius;
 
         if (position === "top-left") {
             // handler.style.borderLeft = RESIZE_HANDLER_BORDER;
             // handler.style.borderTop = RESIZE_HANDLER_BORDER;
-            handler.style.backgroundColor = RESIZE_HANDLER_BACK_COLOR;
-            handler.style.left = RESIZE_HANDLER_POS;
-            handler.style.top = RESIZE_HANDLER_POS;
+            handler.style.left = positionPixel;
+            handler.style.top = positionPixel;
             handler.style.cursor = "nw-resize";
         } else if (position === "bottom-left") {
             // handler.style.borderLeft = RESIZE_HANDLER_BORDER;
             // handler.style.borderBottom = RESIZE_HANDLER_BORDER;
-            handler.style.backgroundColor = RESIZE_HANDLER_BACK_COLOR;
-            handler.style.left = RESIZE_HANDLER_POS;
-            handler.style.bottom = RESIZE_HANDLER_POS;
+            handler.style.left = positionPixel;
+            handler.style.bottom = positionPixel;
             handler.style.cursor = "sw-resize";
         } else if (position === "top-right") {
             // handler.style.borderRight = RESIZE_HANDLER_BORDER;
             // handler.style.borderTop = RESIZE_HANDLER_BORDER;
-            handler.style.backgroundColor = RESIZE_HANDLER_BACK_COLOR;
-            handler.style.right = RESIZE_HANDLER_POS;
-            handler.style.top = RESIZE_HANDLER_POS;
+            handler.style.right = positionPixel;
+            handler.style.top = positionPixel;
             handler.style.cursor = "ne-resize";
         } else if (position === "bottom-right") {
             // handler.style.borderRight = RESIZE_HANDLER_BORDER;
             // handler.style.borderBottom = RESIZE_HANDLER_BORDER;
-            handler.style.backgroundColor = RESIZE_HANDLER_BACK_COLOR;
-            handler.style.right = RESIZE_HANDLER_POS;
-            handler.style.bottom = RESIZE_HANDLER_POS;
+            handler.style.right = positionPixel;
+            handler.style.bottom = positionPixel;
             handler.style.cursor = "se-resize";
         }
 
@@ -130,6 +120,8 @@ export class SquareAnnotation extends SquareAnnotationBase {
      * 矩形削除アイコンを表示する
      */
     private createDeleteIcon(square: HTMLElement) {
+        this.removeDeleteIcon();
+
         const deleteIcon = Context.document.createElement("div");
         deleteIcon.id = "square-delete-icon";
         deleteIcon.style.cursor = "pointer";
@@ -145,7 +137,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
         deleteIcon.onclick = (e: MouseEvent) => {
             // 矩形の削除
             e.stopPropagation();
-            this.deleteSquare(square.id);
+            this.deleteSquare(square);
         };
 
         deleteIcon.onmousedown = (e: MouseEvent) => {
@@ -167,30 +159,41 @@ export class SquareAnnotation extends SquareAnnotationBase {
     /**
      * 矩形アノテーションを削除する
      */
-    private deleteSquare(id: string) {
-        const square = Context.document.getElementById(id);
-        if (square == null) {
+    private deleteSquare(id: Square) {
+        const { squareElement, squareId } = getSquareElement(id);
+        if (squareElement == null) {
             log.error(`delete annotation not found: ${id}`);
             return;
         }
 
-        // add undo stack
-        this.addUndoStack(square, "delete");
+        const pageNumber = Context.pdfManager.getPageNumber(squareElement);
 
-        if (this.editStateManager.isSelect(id)) {
+        // add undo stack
+        this.addUndoStack(squareElement, "delete");
+
+        // undo stackを更新してから消す必要がある
+        // NOTE: selectIdを使うのでstateをreadyにする前に実行する
+        this.deleteSquareElement(squareElement);
+
+        if (this.editStateManager.isSelect(squareId)) {
             // 選択中の矩形を削除する場合は選択状態をキャンセルする
             this.editStateManager.setReadyState();
         }
 
-        // undo stackを更新してから消す必要がある
-        square.remove();
-        this.removeResizeHandler();
-        this.removeDeleteIcon();
+        // dispatch to parent
+        utils.dispatchEvent("change-square", {
+            type: "delete",
+            trigger: "operation",
+            id: getNumberId(squareId),
+            pageNumber,
+        });
     }
+
     /**
      * ダブルクリックで矩形編集モードに入れるようにする
      */
     setSquareDoubleClick() {
+        // MARK: setSquareDoubleClick 矩形ののダブルクリック
         if (this.mode === "edit") {
             // ====================編集モード====================
             Context.window.ondblclick = null;
@@ -206,15 +209,23 @@ export class SquareAnnotation extends SquareAnnotationBase {
                             e.stopPropagation();
                             log.debug(`${el.id}を選択しました`, el);
 
-                            // 矩形選択状態にする
-                            const stateChanged = this.editStateManager.setSelectState(el.id);
-                            if (stateChanged) {
-                                // 編集モードにする
-                                this.setEditMode();
-                                // draw resize handler
-                                this.drawResizeHandler(el.id);
-                                return;
-                            }
+                            const isLocked = AnnotationContext.isLocked(el.id);
+
+                            // dispatch to parent
+                            utils.dispatchEvent("dblclick-square", {
+                                id: getNumberId(el.id),
+                                state: isLocked ? "locked" : "normal",
+                            });
+                            return;
+
+                            // ダブルクリックで編集モードにする処理
+                            // if (this.editStateManager.canSelectSquare(el.id)) {
+                            //     // 編集モードにする
+                            //     this.setEditMode();
+                            //     // 選択状態にする
+                            //     this.selectSquare(el.id);
+                            //     return;
+                            // }
                         }
                     }
                 }
@@ -222,21 +233,27 @@ export class SquareAnnotation extends SquareAnnotationBase {
         }
     }
 
+    clearUndoStack() {
+        this.undoStack = [];
+        this.stackIndex = -1;
+        SquareAnnotationBase.stackId = 1;
+
+        // redoボタンの活性・非活性を更新する
+        this.refreshUndoRedoButton();
+    }
+
     /**
      * ## 操作結果をundo stackに追加する
      * * current dataも更新する
      * * 矩形の座標とsizeをpercent指定にする
      */
-    addUndoStack(squareSection: HTMLElement, operation: StackOperation) {
+    addUndoStack(squareSection: HTMLElement, operation: StackOperation): SquareData | null {
         const pageNumber = Context.pdfManager.getPageNumber(squareSection);
 
         // stackに追加
         if (operation === "create" || operation === "modify") {
             // percent指定にする
             const { xScale, yScale, widthScale, heightScale } = setPercentStyle(squareSection);
-
-            // styleを取得
-            const style = getSupportStyles(squareSection);
 
             // 登録・更新する用のプロパティを作成(別オブジェクトとして保持するために2つ作成する)
             const square = {
@@ -247,9 +264,9 @@ export class SquareAnnotation extends SquareAnnotationBase {
                     y: yScale,
                     width: widthScale,
                     height: heightScale,
-                    style,
                 },
             };
+            const undoStackSquare = utils.deepCopy(square);
 
             if (this.stackIndex < this.undoStack.length - 1) {
                 // undo中に操作された場合は現在位置以降の操作は消す
@@ -257,7 +274,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
             }
 
             // update current squares
-            this.updateCurrentSquares(operation, utils.deepCopy(square));
+            this.updateCurrentSquares(operation, square);
 
             // add undo stack
             this.undoStack.push({
@@ -265,10 +282,18 @@ export class SquareAnnotation extends SquareAnnotationBase {
                 squares: [
                     {
                         operation,
-                        ...square,
+                        ...undoStackSquare,
                     },
                 ],
             });
+
+            SquareAnnotation.stackId++;
+            this.stackIndex++;
+
+            // redoボタンの活性・非活性を更新する
+            this.refreshUndoRedoButton();
+
+            return utils.deepCopy(square);
         } else if (operation === "delete") {
             if (this.stackIndex < this.undoStack.length - 1) {
                 // undo中に操作された場合は現在位置以降の操作は消す
@@ -286,6 +311,9 @@ export class SquareAnnotation extends SquareAnnotationBase {
         }
         SquareAnnotation.stackId++;
         this.stackIndex++;
+
+        // redoボタンの活性・非活性を更新する
+        this.refreshUndoRedoButton();
     }
 
     /**
@@ -318,6 +346,23 @@ export class SquareAnnotation extends SquareAnnotationBase {
         this.currentSquares.splice(index, 1);
     }
 
+    /**
+     * undo/redoボタンの活性・非活性を更新する
+     */
+    private refreshUndoRedoButton() {
+        let undoEnable = false;
+        let redoEnable = false;
+        if (this.undoStack.length > 0) {
+            if (this.stackIndex >= 0) {
+                undoEnable = true;
+            }
+            if (this.stackIndex < this.undoStack.length - 1) {
+                redoEnable = true;
+            }
+        }
+        changeUndoRedoButtonStyle(undoEnable, redoEnable);
+    }
+
     undo() {
         if (this.stackIndex < 0) {
             log.info("undo stack is empty.");
@@ -332,6 +377,14 @@ export class SquareAnnotation extends SquareAnnotationBase {
 
                 // update current data
                 this.deleteCurrentSquare(currentSquare.id);
+
+                // dispatch to parent
+                utils.dispatchEvent("change-square", {
+                    type: "delete",
+                    trigger: "undo",
+                    id: getNumberId(currentSquare.id),
+                    pageNumber: currentSquare.pageNumber,
+                });
             } else {
                 // modify or deleteは直近データで復元する
                 const latestSquare = this.getLatestUndo(currentSquare.id);
@@ -359,11 +412,23 @@ export class SquareAnnotation extends SquareAnnotationBase {
                     // update current data
                     const copied: SquareData = this.copySquareData(latestSquare);
                     this.updateCurrentSquares("create", copied);
+
+                    // dispatch to parent
+                    utils.dispatchEvent("change-square", {
+                        type: "create",
+                        trigger: "undo",
+                        id: getNumberId(currentSquare.id),
+                        pageNumber: currentSquare.pageNumber,
+                        props: copied.props,
+                    });
                 }
             }
         }
 
         this.stackIndex--;
+
+        // redoボタンの活性・非活性を更新する
+        this.refreshUndoRedoButton();
     }
 
     /**
@@ -405,7 +470,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
      */
     private refreshTargetSquare(
         targetElem: HTMLElement | string,
-        square: SquareProps,
+        props: SquareProps,
         operation: "modify" | "delete",
         ur: "undo" | "redo"
     ) {
@@ -425,15 +490,10 @@ export class SquareAnnotation extends SquareAnnotationBase {
             return;
         }
         if (operation === "modify") {
-            targetElem.style.left = `${square.x * 100}%`;
-            targetElem.style.top = `${square.y * 100}%`;
-            targetElem.style.width = `${square.width * 100}%`;
-            targetElem.style.height = `${square.height * 100}%`;
-
-            // set style
-            for (const [key, value] of Object.entries(square.style)) {
-                targetElem.style[key] = value;
-            }
+            targetElem.style.left = `${props.x * 100}%`;
+            targetElem.style.top = `${props.y * 100}%`;
+            targetElem.style.width = `${props.width * 100}%`;
+            targetElem.style.height = `${props.height * 100}%`;
         }
     }
 
@@ -447,21 +507,45 @@ export class SquareAnnotation extends SquareAnnotationBase {
         }
 
         const nextStack = this.undoStack[this.stackIndex + 1];
-        log.debug("nextStack: ", nextStack);
         for (const square of nextStack.squares) {
             if (square.operation === "create") {
                 const annotationLayer = Context.pdfManager.getAnnotationLayer(square.pageNumber);
                 const section = this.createSquareSection(square.id, annotationLayer, square.props);
                 this.updateCurrentSquares("create", this.copySquareData(square));
                 log.debug("create section: ", section);
+
+                // dispatch to parent
+                utils.dispatchEvent("change-square", {
+                    type: "create",
+                    trigger: "redo",
+                    id: getNumberId(square.id),
+                    pageNumber: square.pageNumber,
+                    props: square.props,
+                });
             } else if (square.operation === "modify") {
                 this.refreshTargetSquare(Context.document.getElementById(square.id), square.props, "modify", "redo");
+                this.updateCurrentSquares("modify", this.copySquareData(square));
             } else if (square.operation === "delete") {
                 this.refreshTargetSquare(square.id, square.props, "delete", "redo");
+
+                // update current data
+                this.deleteCurrentSquare(square.id);
+
+                // dispatch to parent
+                utils.dispatchEvent("change-square", {
+                    type: "delete",
+                    trigger: "redo",
+                    id: getNumberId(square.id),
+                    pageNumber: square.pageNumber,
+                    props: square.props,
+                });
             }
         }
 
         this.stackIndex++;
+
+        // redoボタンの活性・非活性を更新する
+        this.refreshUndoRedoButton();
     }
 
     /**
@@ -478,9 +562,11 @@ export class SquareAnnotation extends SquareAnnotationBase {
 
     /**
      * ### 矩形を要素を新しく作成する
-     * クリックイベントも設定する
+     * * 座標、スタイルを設定する
+     * * クリックイベントも設定する
+     * * 矩形作成の開始時はpropsを渡さない(呼び出し元で座標を設定する)
      */
-    createSquareSection(id: string, annotationLayer: HTMLElement, style?: SquareProps) {
+    createSquareSection(id: string, annotationLayer: HTMLElement, props?: SquareProps) {
         if (Context.document.getElementById(id) != null) {
             log.warn(`${id}の矩形は存在します`);
             return;
@@ -498,19 +584,17 @@ export class SquareAnnotation extends SquareAnnotationBase {
         // 他のアノテーションよりダブルクリックを優先する
         section.style.zIndex = generator.squareZindex.nextIndex();
 
-        if (style != null) {
-            section.style.left = `${style.x * 100}%`;
-            section.style.top = `${style.y * 100}%`;
+        if (props != null) {
+            section.style.left = `${props.x * 100}%`;
+            section.style.top = `${props.y * 100}%`;
             section.style.right = null;
             section.style.bottom = null;
-            section.style.width = `${style.width * 100}%`;
-            section.style.height = `${style.height * 100}%`;
-
-            // set style
-            for (const [key, value] of Object.entries(style.style)) {
-                section.style[key] = value;
-            }
+            section.style.width = `${props.width * 100}%`;
+            section.style.height = `${props.height * 100}%`;
         }
+
+        // set style
+        setSquareStyle(section, getSquareState(id));
 
         // add click edit event
         this.setSquareEvent(section);
@@ -518,24 +602,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
         // append
         annotationLayer.appendChild(section);
 
-        if (this.editStateManager.isSelect(id)) {
-            // draw resize handler
-            this.drawResizeHandler(id);
-        }
-
         return section;
-    }
-
-    /**
-     * 矩形を選択する
-     */
-    selectSquare(squareId: string) {
-        // 選択状態にする
-        const stateChanged = this.editStateManager.setSelectState(squareId);
-        if (stateChanged) {
-            // 矩形にresize handlerを追加する
-            this.drawResizeHandler(squareId);
-        }
     }
 
     /**
@@ -599,9 +666,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
         getAllSquares().forEach((square) => square.remove());
 
         // reset undo stack
-        this.undoStack = [];
-        this.stackIndex = -1;
-        SquareAnnotationBase.stackId = 1;
+        this.clearUndoStack();
 
         // 次の矩形idをimport dataから決める
         generator.squareId.updateNextId(data.squares.map((s) => s.id));
@@ -632,5 +697,238 @@ export class SquareAnnotation extends SquareAnnotationBase {
     async importData() {
         const data = await utils.selectFile(".json");
         this.setAnnotations(JSON.parse(data));
+    }
+
+    /**
+     * 指定したアノテーションをlock状態にする
+     */
+    lockAnnotations(args: LockAnnotationsArgs) {
+        AnnotationContext.lockAnnotationIds = args.annotationIds
+            .map((id) => getStrId(id))
+            .filter((id) => {
+                // 存在する矩形だけlockする
+                return this.currentSquares.some((square) => square.id === id);
+            });
+        this.setAllSquaresStyle();
+    }
+
+    setAllSquaresStyle() {
+        // 全矩形のスタイル設定
+        this.currentSquares.forEach((square) => {
+            this.setSquareStyleWithState(square.id);
+        });
+    }
+
+    /**
+     * 矩形状態を変更する
+     */
+    private setSquareStyleWithState(id: string) {
+        const state = getSquareState(id);
+        if (state === "locked") {
+            // locked状態に変更
+            if (this.editStateManager.isSelect(id)) {
+                // 選択中がlockされた場合は選択を解除する
+                this.unselectSquare(id);
+            }
+            setSquareStyle(id, "locked");
+        } else if (state === "normal") {
+            // 通常状態に変更
+            setSquareStyle(id, "normal");
+        }
+
+        if (this.editStateManager.isSelect(id)) {
+            // 選択状態スタイルを適用
+            setSelectSquareStyle(id);
+        }
+    }
+
+    /**
+     * resize handlerのスタイルを更新する
+     */
+    setResizeHandlerStyle() {
+        this.setResizeHandlerStyleWithPosition("top-left");
+        this.setResizeHandlerStyleWithPosition("top-right");
+        this.setResizeHandlerStyleWithPosition("bottom-left");
+        this.setResizeHandlerStyleWithPosition("bottom-right");
+    }
+
+    setResizeHandlerStyleWithPosition(position: Position) {
+        const config = Context.config.getConfig();
+        const backgroundColor = config.squareAnnotation.resizeHandlerStyle.backgroundColor;
+        const borderRadius = config.squareAnnotation.resizeHandlerStyle.borderRadius;
+        const size = config.squareAnnotation.resizeHandlerStyle.size;
+        const positionPixel = config.squareAnnotation.resizeHandlerStyle.position;
+
+        const id = this.getSquareHandlerId(position);
+        const handler = Context.document.getElementById(id);
+        handler.style.width = size;
+        handler.style.height = size;
+        handler.style.backgroundColor = backgroundColor;
+        handler.style.borderRadius = borderRadius;
+
+        if (position === "top-left") {
+            handler.style.left = positionPixel;
+            handler.style.top = positionPixel;
+        } else if (position === "bottom-left") {
+            handler.style.left = positionPixel;
+            handler.style.bottom = positionPixel;
+        } else if (position === "top-right") {
+            handler.style.right = positionPixel;
+            handler.style.top = positionPixel;
+        } else if (position === "bottom-right") {
+            handler.style.right = positionPixel;
+            handler.style.bottom = positionPixel;
+        }
+    }
+
+    /**
+     * ### 矩形を選択状態にする
+     * 実行前に選択可能か判定すること
+     */
+    selectSquare(square: string | HTMLElement) {
+        // MARK: selectSquare2 矩形を選択
+        const squareElement = typeof square === "string" ? Context.document.getElementById(square) : square;
+        const id = typeof square === "string" ? square : squareElement.id;
+
+        const preSquareId = this.editStateManager.selectSquareId;
+        if (preSquareId != null && preSquareId !== id) {
+            // 選択が変わった場合、元々選択していた矩形のスタイルを戻す
+            this.clearSelectStyle(preSquareId);
+        }
+
+        // 矩形を選択状態のスタイルにする
+        setSelectSquareStyle(squareElement);
+
+        // 矩形にresize handlerを追加する
+        this.drawResizeHandler(squareElement);
+
+        // 削除アイコン作成
+        this.createDeleteIcon(squareElement);
+
+        // 選択状態にする
+        this.editStateManager.setSelectState(id);
+    }
+
+    /**
+     * ### 矩形の選択状態を解除する
+     */
+    unselectSquare(id: string) {
+        if (id == null) return;
+        // 描画更新
+        this.clearSelectStyle(id);
+        this.removeResizeHandler();
+        this.removeDeleteIcon();
+        // stateをreadyに戻す
+        this.editStateManager.setReadyState();
+    }
+
+    /**
+     * ### 矩形要素を削除する
+     */
+    private deleteSquareElement(square: Square) {
+        const { squareElement, squareId } = getSquareElement(square);
+        if (this.editStateManager.isSelect(squareId)) {
+            this.removeResizeHandler();
+            this.removeDeleteIcon();
+        }
+        squareElement.remove();
+    }
+
+    /**
+     * ### 矩形の選択スタイルをクリアする
+     */
+    private clearSelectStyle(squareId: string) {
+        if (squareId == null) return;
+
+        // 選択状態スタイルを消す
+        setSquareStyle(squareId, getSquareState(squareId));
+    }
+
+    private removeResizeHandler() {
+        // remove resize handler
+        const remove = (e: HTMLElement) => {
+            if (e != null) e.remove();
+        };
+        remove(Context.document.getElementById(this.getSquareHandlerId("top-left")));
+        remove(Context.document.getElementById(this.getSquareHandlerId("top-right")));
+        remove(Context.document.getElementById(this.getSquareHandlerId("bottom-left")));
+        remove(Context.document.getElementById(this.getSquareHandlerId("bottom-right")));
+    }
+
+    /**
+     * 削除アイコンを消す
+     */
+    private removeDeleteIcon() {
+        const elem = Context.document.getElementById("square-delete-icon");
+        if (elem != null) elem.remove();
+    }
+
+    /**
+     * 矩形の新規作成を許可する
+     */
+    allowCreateNew() {
+        this.editStateManager.allowCreateNew = true;
+        Context.pdfManager.getPages().forEach((page) => {
+            const layer = Context.pdfManager.getAnnotationLayer(page);
+            if (layer != null) {
+                layer.style.cursor = COURSOR_STYLE.CAN_CREATE;
+            }
+        });
+    }
+
+    /**
+     * 矩形の新規作成を禁止する
+     */
+    disallowCreateNew() {
+        this.editStateManager.allowCreateNew = false;
+        Context.pdfManager.getPages().forEach((page) => {
+            const layer = Context.pdfManager.getAnnotationLayer(page);
+            if (layer != null) {
+                layer.style.cursor = null;
+            }
+        });
+    }
+
+    /**
+     * 矩形の位置にスクロールする
+     */
+    scrollToSquare(id: number) {
+        const viewer = Context.document.getElementById("viewerContainer");
+        if (viewer == null) return;
+
+        const strId = getStrId(id);
+        const square = this.currentSquares.find((s) => s.id === strId);
+        if (square == null) return;
+
+        const page = Context.pdfManager.getPage(square.pageNumber);
+        if (page == null) return;
+
+        const { y } = page.getBoundingClientRect();
+
+        // page上部にスクロール
+        viewer.scroll(0, y + viewer.scrollTop);
+
+        // 矩形にスクロール
+        this._scrollToSquare(viewer, strId, 0);
+    }
+
+    /**
+     * ### 矩形の位置にスクロールする
+     * 矩形がまだレンダリングされてない場合は1ms後に再度実行する
+     */
+    private _scrollToSquare(viewer: HTMLElement, strId: string, count: number) {
+        // 1秒以上経過しても矩形がレンダリングされなければ中断する
+        if (count > 1000) return;
+
+        const squareElement = Context.document.getElementById(strId);
+        if (squareElement == null) {
+            setTimeout(() => {
+                // 矩形がまだレンダリングされてないなら1ms後に再度実行
+                this._scrollToSquare(viewer, strId, count + 1);
+            }, 1);
+        } else {
+            const { y: sy } = squareElement.getBoundingClientRect();
+            viewer.scrollTo({ top: viewer.scrollTop + sy - 50, behavior: "smooth" });
+        }
     }
 }

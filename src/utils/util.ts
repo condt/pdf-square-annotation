@@ -1,8 +1,53 @@
-type ContentType = "application/json" | "text/plain";
+import { SquareState } from "@/square-annotation/style/square-style";
+import { SquareProps } from "@/square-annotation/types/square";
+
+type DispatchType = "change-square" | "dblclick-square" | "mousedown-square";
+type ChangeSquareType = "create" | "delete" | "resize" | "move";
+type ChangeSquareTrigger = "operation" | "undo" | "redo";
+
+type DispatchDetail<T> = T extends "change-square"
+    ? ChangeSquareEvent
+    : T extends "dblclick-square"
+      ? DoubleClickSquareEvent
+      : T extends "mousedown-square"
+        ? MouseDownSquareEvent
+        : {};
+
+export interface ChangeSquareEvent {
+    type: ChangeSquareType;
+    trigger: ChangeSquareTrigger;
+    id: number;
+    pageNumber: number;
+    props?: SquareProps;
+}
+
+export interface DoubleClickSquareEvent {
+    id: number;
+    state: SquareState;
+}
+
+export interface MouseDownSquareEvent {
+    id: number;
+    state: SquareState;
+}
+
+/**
+ * parentにeventを送信する
+ */
+const dispatchEvent = <T extends DispatchType>(type: T, detail: DispatchDetail<T>) => {
+    const event = new CustomEvent(type, {
+        cancelable: true,
+        bubbles: true,
+        detail,
+    });
+    window.parent.dispatchEvent(event);
+};
 
 const deepCopy = (data: any) => {
     return JSON.parse(JSON.stringify(data));
 };
+
+type ContentType = "application/json" | "text/plain";
 
 /**
  * 指定した内容をファイルとしてダウンロードする
@@ -44,6 +89,7 @@ const selectFile = async (accept: string = "*") => {
 };
 
 export const utils = {
+    dispatchEvent,
     deepCopy,
     download,
     selectFile,

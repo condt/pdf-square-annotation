@@ -8,6 +8,8 @@ import { AppQueryParameters } from "./utils/parameters.js";
 
 import type { ExportData } from "./square-annotation/types/square.js";
 import type { AppConfigType } from "./types/app-config.js";
+import { LockAnnotationsArgs } from "./types/lock.js";
+import { changeUndoRedoButtonStyle } from "./square-annotation/style/toolbar.js";
 
 Context.params = new AppQueryParameters();
 Context.config = new AppConfig();
@@ -68,6 +70,51 @@ window.exportAnnotations = () => {
  */
 window.importAnnotations = async () => {
     await Context.squareAnnotation.importData();
+};
+
+/**
+ * 指定したアノテーションをlock状態にする
+ */
+window.lockAnnotations = (args: LockAnnotationsArgs) => {
+    Context.squareAnnotation.lockAnnotations(args);
+};
+
+/**
+ * 矩形の新規作成を禁止する
+ */
+window.disallowCreateNew = () => {
+    Context.squareAnnotation.disallowCreateNew();
+};
+
+/**
+ * 矩形の新規作成を許可する
+ */
+window.allowCreateNew = () => {
+    Context.squareAnnotation.allowCreateNew();
+};
+
+/**
+ * undo stackを空にする
+ */
+window.clearUndoStack = () => {
+    Context.squareAnnotation.clearUndoStack();
+};
+
+/**
+ * 矩形の位置にスクロールする
+ */
+window.scrollToSquare = (id: number) => {
+    Context.squareAnnotation.scrollToSquare(id);
+};
+
+// @ts-ignore for debug
+window.showCurrentSquares = () => {
+    Context.squareAnnotation.showCurrentSquares();
+};
+
+window.onload = () => {
+    // undo/redoボタンを非活性にする
+    changeUndoRedoButtonStyle(false, false);
 };
 
 window.addEventListener("webviewerloaded", async (event: any) => {
