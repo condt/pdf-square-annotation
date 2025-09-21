@@ -8,6 +8,17 @@
     </head>
     <link rel="stylesheet" href="./example/style.css" />
     <body>
+        <div id="button-container">
+            <button onclick="lockAnnotations()">lock 1,2</button>
+            <button onclick="unlockAnnotations()">unlock all</button>
+            <button onclick="clearUndoStack()">clearUndoStack</button>
+            <button onclick="allowCreateNew()">allowCreateNew</button>
+            <button onclick="disallowCreateNew()">disallowCreateNew</button>
+            <button onclick="scrollToSquare(1)">scroll to 1</button>
+            <button onclick="scrollToSquare(2)">scroll to 2</button>
+            <button onclick="setAppConfig()">setAppConfig</button>
+            <button onclick="showCurrentSquares()">showCurrentSquares (console)</button>
+        </div>
         <!-- PDF -->
         <div id="pdf-container">
             <!-- pdf lib -->
