@@ -1,9 +1,14 @@
+import { toggleToolbarButton } from "@/square-annotation/style/toolbar.js";
 import { AppConfigType } from "../types/app-config.js";
 
 /**
  * デフォルトの設定値
  */
 const DEFAULT_CONFIG: AppConfigType = {
+    toolbar: {
+        exportButton: true,
+        importButton: true,
+    },
     squareAnnotation: {
         SquareStyle: {
             backgroundColor: "rgba(0,255,0,0.3)",
@@ -16,12 +21,20 @@ const DEFAULT_CONFIG: AppConfigType = {
 };
 
 export class AppConfig {
-    config: AppConfigType = DEFAULT_CONFIG;
+    private config: AppConfigType = DEFAULT_CONFIG;
 
     constructor() {}
 
+    getConfig() {
+        return this.config;
+    }
+
     setConfig(config: AppConfigType) {
         this.mergeConfig(config);
+        toggleToolbarButton({
+            exportButton: this.config.toolbar.exportButton,
+            importButton: this.config.toolbar.importButton,
+        });
     }
 
     /**
@@ -29,6 +42,10 @@ export class AppConfig {
      */
     private mergeConfig(newConfig: AppConfigType) {
         newConfig.squareAnnotation ??= {};
+
+        newConfig.toolbar ??= {};
+        newConfig.toolbar.exportButton ??= this.config.toolbar.exportButton;
+        newConfig.toolbar.importButton ??= this.config.toolbar.importButton;
 
         newConfig.squareAnnotation.SquareStyle ??= {};
         newConfig.squareAnnotation.SquareStyle.backgroundColor ??=

@@ -1,6 +1,14 @@
 import { Mode } from "@/square-annotation/types/square";
 
 /**
+ * toolbar buttonの表示・非表示
+ */
+interface ToolbarButtons {
+    exportButton?: boolean;
+    importButton?: boolean;
+}
+
+/**
  * modeによってtoolbarのスタイルを変える
  */
 export const changeToolbarSelected = (currentMode: Mode) => {
@@ -36,5 +44,18 @@ const setButtonEnabledStyle = (elem: HTMLElement, enabled: boolean) => {
     } else {
         elem.classList.add("disable");
         elem.querySelector("svg").style.fill = "rgb(170, 170, 170)";
+    }
+};
+
+export const toggleToolbarButton = (buttons: ToolbarButtons) => {
+    for (const [key, value] of Object.entries(buttons)) {
+        if (key === "exportButton") {
+            const button = <HTMLElement>document.querySelector(".export-button");
+            button.style.display = value ? "flex" : "none";
+        }
+        if (key === "importButton") {
+            const button = <HTMLElement>document.querySelector(".import-button");
+            button.style.display = value ? "flex" : "none";
+        }
     }
 };
