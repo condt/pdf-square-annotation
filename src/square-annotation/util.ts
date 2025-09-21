@@ -1,8 +1,10 @@
+import { AnnotationContext } from "@/utils/context/annotation.js";
 import { Context } from "../utils/context.js";
 import { log } from "../utils/log.js";
 import { ID_PREFIX } from "./style/settings.js";
 
 import type { Square } from "./types/square.js";
+import type { SquareState } from "./style/square-style.js";
 
 /**
  * 矩形要素とそのidを返す
@@ -11,6 +13,17 @@ export const getSquareElement = (square: Square) => {
     const squareElement = typeof square === "string" ? Context.document.getElementById(square) : square;
     const squareId = squareElement?.id ?? "";
     return { squareElement, squareId };
+};
+
+/**
+ * 矩形の状態を返す
+ */
+export const getSquareState = (id: string): SquareState => {
+    if (AnnotationContext.lockAnnotationIds.includes(id)) {
+        return "locked";
+    } else {
+        return "normal";
+    }
 };
 
 /**

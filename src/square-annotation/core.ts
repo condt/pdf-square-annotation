@@ -1,7 +1,9 @@
+import { AnnotationContext } from "@/utils/context/annotation.js";
 import { Context } from "../utils/context.js";
 import { log } from "../utils/log.js";
 import { utils } from "../utils/util.js";
 import { SquareAnnotationBase } from "./base.js";
+import { checkImportData, createCurrentData, createExportData } from "./io.js";
 import { layerEvent } from "./layer-event.js";
 import { resizeHandlerEvent } from "./resize-handler-event.js";
 import { squareEvent } from "./square-event.js";
@@ -12,13 +14,20 @@ import {
     RESIZE_HANDLER_POS,
     RESIZE_HANDLER_SIZE,
 } from "./style/settings.js";
-import { setSelectSquareStyle, setSquareStyle, SquareState } from "./style/square-style.js";
+import { setSelectSquareStyle, setSquareStyle } from "./style/square-style.js";
 import { DELETE_SVG } from "./style/svg/delete.js";
-import { generator, getAllSquares, getNumberId, getSquareElement, getStrId, setPercentStyle } from "./util.js";
-import { checkImportData, createCurrentData, createExportData } from "./io.js";
-import { AnnotationContext } from "@/utils/context/annotation.js";
+import {
+    generator,
+    getAllSquares,
+    getNumberId,
+    getSquareElement,
+    getSquareState,
+    getStrId,
+    setPercentStyle,
+} from "./util.js";
 
 import type { LockAnnotationsArgs } from "@/types/lock.js";
+import { changeUndoRedoButtonStyle } from "./style/toolbar.js";
 import type {
     ExportData,
     Position,
@@ -28,7 +37,6 @@ import type {
     SquareProps,
     StackOperation,
 } from "./types/square.js";
-import { changeUndoRedoButtonStyle } from "./style/toolbar.js";
 
 export class SquareAnnotation extends SquareAnnotationBase {
     /**
@@ -258,8 +266,6 @@ export class SquareAnnotation extends SquareAnnotationBase {
                     y: yScale,
                     width: widthScale,
                     height: heightScale,
-                    // NOTE: スタイルは各矩形のstateを表すので保持しないことにした
-                    style: null,
                 },
             };
             const undoStackSquare = utils.deepCopy(square);
@@ -590,7 +596,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
         }
 
         // set style
-        setSquareStyle(section, this.getSquareState(id));
+        setSquareStyle(section, getSquareState(id));
 
         // add click edit event
         this.setSquareEvent(section);
@@ -719,7 +725,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
      * 矩形状態を変更する
      */
     private setSquareStyleWithState(id: string) {
-        const state = this.getSquareState(id);
+        const state = getSquareState(id);
         if (state === "locked") {
             // locked状態に変更
             if (this.editStateManager.isSelect(id)) {
@@ -735,14 +741,6 @@ export class SquareAnnotation extends SquareAnnotationBase {
         if (this.editStateManager.isSelect(id)) {
             // 選択状態スタイルを適用
             setSelectSquareStyle(id);
-        }
-    }
-
-    getSquareState(id: string): SquareState {
-        if (AnnotationContext.lockAnnotationIds.includes(id)) {
-            return "locked";
-        } else {
-            return "normal";
         }
     }
 
@@ -806,7 +804,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
         if (squareId == null) return;
 
         // 選択状態スタイルを消す
-        setSquareStyle(squareId, this.getSquareState(squareId), false);
+        setSquareStyle(squareId, getSquareState(squareId), false);
     }
 
     private removeResizeHandler() {

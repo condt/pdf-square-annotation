@@ -219,7 +219,10 @@ export abstract class SquareAnnotationBase {
      * for debug
      */
     showCurrentSquares() {
+        log.debug("==currentSquares==");
         log.debug(this.currentSquares);
+        log.debug("==undoStack==");
+        log.debug(this.undoStack);
     }
 
     /**
