@@ -28,6 +28,7 @@ import type {
     SquareProps,
     StackOperation,
 } from "./types/square.js";
+import { changeUndoRedoButtonStyle } from "./style/toolbar.js";
 
 export class SquareAnnotation extends SquareAnnotationBase {
     /**
@@ -230,6 +231,9 @@ export class SquareAnnotation extends SquareAnnotationBase {
         this.undoStack = [];
         this.stackIndex = -1;
         SquareAnnotationBase.stackId = 1;
+
+        // redoボタンの活性・非活性を更新する
+        this.refreshUndoRedoButton();
     }
 
     /**
@@ -282,6 +286,9 @@ export class SquareAnnotation extends SquareAnnotationBase {
             SquareAnnotation.stackId++;
             this.stackIndex++;
 
+            // redoボタンの活性・非活性を更新する
+            this.refreshUndoRedoButton();
+
             return utils.deepCopy(square);
         } else if (operation === "delete") {
             if (this.stackIndex < this.undoStack.length - 1) {
@@ -300,6 +307,9 @@ export class SquareAnnotation extends SquareAnnotationBase {
         }
         SquareAnnotation.stackId++;
         this.stackIndex++;
+
+        // redoボタンの活性・非活性を更新する
+        this.refreshUndoRedoButton();
     }
 
     /**
@@ -330,6 +340,23 @@ export class SquareAnnotation extends SquareAnnotationBase {
             return;
         }
         this.currentSquares.splice(index, 1);
+    }
+
+    /**
+     * undo/redoボタンの活性・非活性を更新する
+     */
+    private refreshUndoRedoButton() {
+        let undoEnable = false;
+        let redoEnable = false;
+        if (this.undoStack.length > 0) {
+            if (this.stackIndex >= 0) {
+                undoEnable = true;
+            }
+            if (this.stackIndex < this.undoStack.length - 1) {
+                redoEnable = true;
+            }
+        }
+        changeUndoRedoButtonStyle(undoEnable, redoEnable);
     }
 
     undo() {
@@ -395,6 +422,9 @@ export class SquareAnnotation extends SquareAnnotationBase {
         }
 
         this.stackIndex--;
+
+        // redoボタンの活性・非活性を更新する
+        this.refreshUndoRedoButton();
     }
 
     /**
@@ -509,6 +539,9 @@ export class SquareAnnotation extends SquareAnnotationBase {
         }
 
         this.stackIndex++;
+
+        // redoボタンの活性・非活性を更新する
+        this.refreshUndoRedoButton();
     }
 
     /**

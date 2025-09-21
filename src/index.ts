@@ -9,6 +9,7 @@ import { AppQueryParameters } from "./utils/parameters.js";
 import type { ExportData } from "./square-annotation/types/square.js";
 import type { AppConfigType } from "./types/app-config.js";
 import { LockAnnotationsArgs } from "./types/lock.js";
+import { changeUndoRedoButtonStyle } from "./square-annotation/style/toolbar.js";
 
 Context.params = new AppQueryParameters();
 Context.config = new AppConfig();
@@ -102,6 +103,11 @@ window.clearUndoStack = () => {
 // @ts-ignore for debug
 window.showCurrentSquares = () => {
     Context.squareAnnotation.showCurrentSquares();
+};
+
+window.onload = () => {
+    // undo/redoボタンを非活性にする
+    changeUndoRedoButtonStyle(false, false);
 };
 
 window.addEventListener("webviewerloaded", async (event: any) => {
