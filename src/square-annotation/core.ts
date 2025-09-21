@@ -7,13 +7,7 @@ import { checkImportData, createCurrentData, createExportData } from "./io.js";
 import { layerEvent } from "./layer-event.js";
 import { resizeHandlerEvent } from "./resize-handler-event.js";
 import { squareEvent } from "./square-event.js";
-import {
-    COURSOR_STYLE,
-    CUSTOM_ANNOTATION_CLASSES,
-    RESIZE_HANDLER_BACK_COLOR,
-    RESIZE_HANDLER_POS,
-    RESIZE_HANDLER_SIZE,
-} from "./style/settings.js";
+import { COURSOR_STYLE, CUSTOM_ANNOTATION_CLASSES } from "./style/settings.js";
 import { setSelectSquareStyle, setSquareStyle } from "./style/square-style.js";
 import { DELETE_SVG } from "./style/svg/delete.js";
 import {
@@ -73,41 +67,45 @@ export class SquareAnnotation extends SquareAnnotationBase {
      * resize handlerを作成してsquareに付与する
      */
     private createDragHandlerElement(square: HTMLElement, position: Position) {
+        const config = Context.config.getConfig();
+        const backgroundColor = config.squareAnnotation.resizeHandlerStyle.backgroundColor;
+        const borderRadius = config.squareAnnotation.resizeHandlerStyle.borderRadius;
+        const size = config.squareAnnotation.resizeHandlerStyle.size;
+        const positionPixel = config.squareAnnotation.resizeHandlerStyle.position;
+
         const handler = Context.document.createElement("div");
         const id = this.getSquareHandlerId(position);
         handler.id = id;
         handler.style.position = "absolute";
         handler.style.zIndex = "10000000";
-        handler.style.width = RESIZE_HANDLER_SIZE;
-        handler.style.height = RESIZE_HANDLER_SIZE;
+        handler.style.width = size;
+        handler.style.height = size;
+        handler.style.backgroundColor = backgroundColor;
+        handler.style.borderRadius = borderRadius;
 
         if (position === "top-left") {
             // handler.style.borderLeft = RESIZE_HANDLER_BORDER;
             // handler.style.borderTop = RESIZE_HANDLER_BORDER;
-            handler.style.backgroundColor = RESIZE_HANDLER_BACK_COLOR;
-            handler.style.left = RESIZE_HANDLER_POS;
-            handler.style.top = RESIZE_HANDLER_POS;
+            handler.style.left = positionPixel;
+            handler.style.top = positionPixel;
             handler.style.cursor = "nw-resize";
         } else if (position === "bottom-left") {
             // handler.style.borderLeft = RESIZE_HANDLER_BORDER;
             // handler.style.borderBottom = RESIZE_HANDLER_BORDER;
-            handler.style.backgroundColor = RESIZE_HANDLER_BACK_COLOR;
-            handler.style.left = RESIZE_HANDLER_POS;
-            handler.style.bottom = RESIZE_HANDLER_POS;
+            handler.style.left = positionPixel;
+            handler.style.bottom = positionPixel;
             handler.style.cursor = "sw-resize";
         } else if (position === "top-right") {
             // handler.style.borderRight = RESIZE_HANDLER_BORDER;
             // handler.style.borderTop = RESIZE_HANDLER_BORDER;
-            handler.style.backgroundColor = RESIZE_HANDLER_BACK_COLOR;
-            handler.style.right = RESIZE_HANDLER_POS;
-            handler.style.top = RESIZE_HANDLER_POS;
+            handler.style.right = positionPixel;
+            handler.style.top = positionPixel;
             handler.style.cursor = "ne-resize";
         } else if (position === "bottom-right") {
             // handler.style.borderRight = RESIZE_HANDLER_BORDER;
             // handler.style.borderBottom = RESIZE_HANDLER_BORDER;
-            handler.style.backgroundColor = RESIZE_HANDLER_BACK_COLOR;
-            handler.style.right = RESIZE_HANDLER_POS;
-            handler.style.bottom = RESIZE_HANDLER_POS;
+            handler.style.right = positionPixel;
+            handler.style.bottom = positionPixel;
             handler.style.cursor = "se-resize";
         }
 

@@ -12,7 +12,7 @@ window.init = async () => {
     const iframe = document.getElementById("pdfjs");
 
     // set config (optional)
-    iframe.contentWindow.setAppConfig(config);
+    // iframe.contentWindow.setAppConfig(config);
 
     // fetch PDF
     const response = await fetch(getPDFUrl());
@@ -78,13 +78,23 @@ const config = {
         exportButton: true,
         importButton: true,
     },
-    // squareAnnotation: {
-    //     SquareStyle: {
-    //         backgroundColor: "rgba(255,0,0,0.5)",
-    //         border: "1px solid rgba(0,0,255,1)",
-    //     },
-    //     handlerStyle: {
-    //         backgroundColor: "rgba(0,0,0,1)",
-    //     },
-    // },
+    squareAnnotation: {
+        normalStyle: {
+            border: "1px solid rgba(0,0,255,1)",
+            backgroundColor: "#fff",
+        },
+        lockedStyle: {
+            border: "3px solid #333",
+            backgroundColor: "red",
+        },
+        selectedStyle: {
+            backgroundColor: "rgba(0,180,0,0.8)",
+            border: "1px solid rgba(255,0,0,1)",
+        },
+        resizeHandlerStyle: {
+            backgroundColor: "#000",
+            borderRadius: "10px",
+            position: "-3px",
+        },
+    },
 };

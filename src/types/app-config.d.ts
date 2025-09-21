@@ -7,12 +7,22 @@ export interface AppConfigType {
         importButton?: boolean;
     };
     squareAnnotation?: {
-        SquareStyle?: {
+        normalStyle?: {
             border?: string;
             backgroundColor?: string;
         };
-        handlerStyle?: {
+        lockedStyle?: {
+            border?: string;
             backgroundColor?: string;
+        };
+        selectedStyle?: {
+            border?: string;
+        };
+        resizeHandlerStyle?: {
+            backgroundColor?: string;
+            borderRadius?: string;
+            size?: string;
+            position?: string;
         };
     };
 }

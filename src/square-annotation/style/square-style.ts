@@ -1,5 +1,5 @@
+import { Context } from "@/utils/context";
 import { getSquareElement } from "../util";
-import { SQUARE_BACK_COLOR, SQUARE_LOCKED_BACK_COLOR, SQUARE_SELECTED_BORDER } from "./settings";
 
 /**
  * 矩形の状態
@@ -14,37 +14,16 @@ export type SupportStyle = {
 };
 
 /**
- * デフォルトの矩形のスタイル
- */
-const DEFAULT_STYLE: SupportStyle = {
-    border: null,
-    backgroundColor: SQUARE_BACK_COLOR,
-};
-
-/**
- * 選択中の矩形のスタイル
- */
-const SELECT_STYLE: SupportStyle = {
-    border: SQUARE_SELECTED_BORDER,
-};
-
-/**
- * lockされている矩形のスタイル
- */
-const LOCKED_STYLE: SupportStyle = {
-    border: null,
-    backgroundColor: SQUARE_LOCKED_BACK_COLOR,
-};
-
-/**
  * ## 指定stateのstyle propsを返す
  * プロパティがない場合は既存値を返す  \
  * そのためstyleを指定しなければ全プロパティをデフォルト値で上書きする
  */
 const getStyle = (state: SquareState, style?: SupportStyle): SupportStyle => {
+    const config = Context.config.getConfig();
+
     if (style == null) {
-        if (state === "normal") return { ...DEFAULT_STYLE };
-        if (state === "locked") return { ...LOCKED_STYLE };
+        if (state === "normal") return { ...config.squareAnnotation.normalStyle };
+        if (state === "locked") return { ...config.squareAnnotation.lockedStyle };
     }
 
     const values = {};
@@ -53,8 +32,8 @@ const getStyle = (state: SquareState, style?: SupportStyle): SupportStyle => {
             values[propName] = style[propName];
         } else {
             // デフォルトを適用
-            if (state === "normal") values[propName] = DEFAULT_STYLE[propName];
-            if (state === "locked") values[propName] = LOCKED_STYLE[propName];
+            if (state === "normal") values[propName] = config.squareAnnotation.normalStyle[propName];
+            if (state === "locked") values[propName] = config.squareAnnotation.lockedStyle[propName];
         }
     }
     return values as SupportStyle;
@@ -69,9 +48,12 @@ export const setSquareStyle = (square: string | HTMLElement, state: SquareState,
         return;
     }
     const style = getStyle(state);
+    console.log("style: ", style);
     __setSquareStyle(squareElement, style);
     if (isSelected) {
-        __setSquareStyle(squareElement, SELECT_STYLE);
+        const config = Context.config.getConfig();
+        console.log("config.squareAnnotation.selectedStyle: ", config.squareAnnotation.selectedStyle);
+        __setSquareStyle(squareElement, config.squareAnnotation.selectedStyle);
     }
 };
 
@@ -84,7 +66,8 @@ export const setSelectSquareStyle = (square: string | HTMLElement) => {
         return;
     }
 
-    __setSquareStyle(squareElement, SELECT_STYLE);
+    const config = Context.config.getConfig();
+    __setSquareStyle(squareElement, config.squareAnnotation.selectedStyle);
 };
 
 /**

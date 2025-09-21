@@ -1,5 +1,14 @@
 import { toggleToolbarButton } from "@/square-annotation/style/toolbar.js";
 import { AppConfigType } from "../types/app-config.js";
+import {
+    RESIZE_HANDLER_BACK_COLOR,
+    RESIZE_HANDLER_BORDER_RADIUS,
+    RESIZE_HANDLER_POS,
+    RESIZE_HANDLER_SIZE,
+    SQUARE_BACK_COLOR,
+    SQUARE_LOCKED_BACK_COLOR,
+    SQUARE_SELECTED_BORDER,
+} from "@/square-annotation/style/settings.js";
 
 /**
  * デフォルトの設定値
@@ -10,12 +19,22 @@ const DEFAULT_CONFIG: AppConfigType = {
         importButton: true,
     },
     squareAnnotation: {
-        SquareStyle: {
-            backgroundColor: "rgba(0,255,0,0.3)",
+        normalStyle: {
+            backgroundColor: SQUARE_BACK_COLOR,
             border: null,
         },
-        handlerStyle: {
-            backgroundColor: "rgba(0,0,200,1)",
+        lockedStyle: {
+            backgroundColor: SQUARE_LOCKED_BACK_COLOR,
+            border: null,
+        },
+        selectedStyle: {
+            border: SQUARE_SELECTED_BORDER,
+        },
+        resizeHandlerStyle: {
+            backgroundColor: RESIZE_HANDLER_BACK_COLOR,
+            borderRadius: RESIZE_HANDLER_BORDER_RADIUS,
+            size: RESIZE_HANDLER_SIZE,
+            position: RESIZE_HANDLER_POS,
         },
     },
 };
@@ -47,14 +66,27 @@ export class AppConfig {
         newConfig.toolbar.exportButton ??= this.config.toolbar.exportButton;
         newConfig.toolbar.importButton ??= this.config.toolbar.importButton;
 
-        newConfig.squareAnnotation.SquareStyle ??= {};
-        newConfig.squareAnnotation.SquareStyle.backgroundColor ??=
-            this.config.squareAnnotation.SquareStyle.backgroundColor;
-        newConfig.squareAnnotation.SquareStyle.border ??= this.config.squareAnnotation.SquareStyle.border;
+        newConfig.squareAnnotation.normalStyle ??= {};
+        newConfig.squareAnnotation.normalStyle.backgroundColor ??=
+            this.config.squareAnnotation.normalStyle.backgroundColor;
+        newConfig.squareAnnotation.normalStyle.border ??= this.config.squareAnnotation.normalStyle.border;
 
-        newConfig.squareAnnotation.handlerStyle ??= {};
-        newConfig.squareAnnotation.handlerStyle.backgroundColor ??=
-            this.config.squareAnnotation.handlerStyle.backgroundColor;
+        newConfig.squareAnnotation.lockedStyle ??= {};
+        newConfig.squareAnnotation.lockedStyle.backgroundColor ??=
+            this.config.squareAnnotation.lockedStyle.backgroundColor;
+        newConfig.squareAnnotation.lockedStyle.border ??= this.config.squareAnnotation.lockedStyle.border;
+
+        newConfig.squareAnnotation.selectedStyle ??= {};
+        newConfig.squareAnnotation.selectedStyle.border ??= this.config.squareAnnotation.selectedStyle.border;
+
+        newConfig.squareAnnotation.resizeHandlerStyle ??= {};
+        newConfig.squareAnnotation.resizeHandlerStyle.backgroundColor ??=
+            this.config.squareAnnotation.resizeHandlerStyle.backgroundColor;
+        newConfig.squareAnnotation.resizeHandlerStyle.borderRadius ??=
+            this.config.squareAnnotation.resizeHandlerStyle.borderRadius;
+        newConfig.squareAnnotation.resizeHandlerStyle.size ??= this.config.squareAnnotation.resizeHandlerStyle.size;
+        newConfig.squareAnnotation.resizeHandlerStyle.position ??=
+            this.config.squareAnnotation.resizeHandlerStyle.position;
 
         this.config = newConfig;
     }
