@@ -237,6 +237,9 @@ export class SquareAnnotation extends SquareAnnotationBase {
         this.stackIndex = -1;
         SquareAnnotationBase.stackId = 1;
 
+        // 既存の矩形編集をundo可能にするため、initialSquaresを更新
+        this.initialSquares = this.currentSquares.map((square) => utils.deepCopy(square));
+
         // redoボタンの活性・非活性を更新する
         this.refreshUndoRedoButton();
     }
@@ -670,8 +673,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
         // 次の矩形idをimport dataから決める
         generator.squareId.updateNextId(data.squares.map((s) => s.id));
 
-        this.initialSquares = squares;
-        this.currentSquares = utils.deepCopy(squares);
+        this.currentSquares = squares;
 
         this.editStateManager.setReadyState();
 
