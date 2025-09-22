@@ -20,6 +20,16 @@ declare global {
     function openPdf(data: Blob | string): Promise<void>;
 
     /**
+     * 編集モードにする
+     */
+    function startEdit(): void;
+
+    /**
+     * プレビューモードにする
+     */
+    function startPreview(): void;
+
+    /**
      * ## アノテーションを描画する
      */
     function setAnnotations(data: ExportData): void;
