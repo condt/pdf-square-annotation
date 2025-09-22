@@ -705,7 +705,7 @@ export class SquareAnnotation extends SquareAnnotationBase {
      */
     lockAnnotations(annotationIds: number[], overwrite = false) {
         if (overwrite) {
-            // 上書き
+            // 上書きする
             AnnotationContext.lockAnnotationIds = annotationIds
                 .map((id) => getStrId(id))
                 .filter((id) => {

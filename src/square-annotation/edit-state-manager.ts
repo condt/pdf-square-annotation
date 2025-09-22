@@ -129,7 +129,7 @@ export class EditStateManager {
 
     /**
      * ### 矩形選択状態にする
-     * **実行前に選択できるかcanSelectSquareでチェックすること**  \
+     * **実行前に選択できるかcanSelectSquareでチェックすること**
      */
     setSelectState(newSelectSquareId: string) {
         this.initParams();
@@ -257,7 +257,7 @@ export class EditStateManager {
      * 現在選択中の矩形ならtrueを返す
      */
     isSelect(squareId: string) {
-        return this.state === "select-square" && this.selectSquareId === squareId;
+        return this.selectSquareId === squareId;
     }
 
     isResizing() {
