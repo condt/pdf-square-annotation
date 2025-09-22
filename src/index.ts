@@ -126,7 +126,6 @@ window.addEventListener("webviewerloaded", async (event: any) => {
 
     // 初期化完了を待つ
     const pdfjs = await PDFViewerApplication.pdfLoadingTask.promise;
-    Context.app.successOpen();
 
     // ページがレンダリングされた時に各ページごとに実行される
     // 一度レンダリングしたページでも離れてdestroyされると、再度スクロール時にレンダリングされる
@@ -149,4 +148,6 @@ window.addEventListener("webviewerloaded", async (event: any) => {
 
     Context.pdfManager = new PDFManager();
     Context.squareAnnotation = new SquareAnnotation();
+
+    Context.app.successOpen();
 });
