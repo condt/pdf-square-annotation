@@ -1,6 +1,5 @@
 import { ExportData } from "../square-annotation/types/square.js";
 import { AppConfigType } from "./app-config.js";
-import { LockAnnotationsArgs } from "./lock.js";
 
 export {};
 
@@ -57,7 +56,7 @@ declare global {
     /**
      * 指定したアノテーションをlock状態にする
      */
-    function lockAnnotations(args: LockAnnotationsArgs): void;
+    function lockAnnotations(annotationIds: number[], overwrite?: boolean): void;
 
     /**
      * undo stackを空にする

@@ -19,9 +19,8 @@ import {
     getStrId,
     setPercentStyle,
 } from "./util.js";
-
-import type { LockAnnotationsArgs } from "@/types/lock.js";
 import { changeUndoRedoButtonStyle } from "./style/toolbar.js";
+
 import type {
     ExportData,
     Position,
@@ -702,13 +701,30 @@ export class SquareAnnotation extends SquareAnnotationBase {
     /**
      * 指定したアノテーションをlock状態にする
      */
-    lockAnnotations(args: LockAnnotationsArgs) {
-        AnnotationContext.lockAnnotationIds = args.annotationIds
-            .map((id) => getStrId(id))
-            .filter((id) => {
-                // 存在する矩形だけlockする
-                return this.currentSquares.some((square) => square.id === id);
-            });
+    lockAnnotations(annotationIds: number[], overwrite = false) {
+        if (overwrite) {
+            // 上書き
+            AnnotationContext.lockAnnotationIds = annotationIds
+                .map((id) => getStrId(id))
+                .filter((id) => {
+                    // 存在する矩形だけlockする
+                    return this.currentSquares.some((square) => square.id === id);
+                });
+        } else {
+            // 上書きしない
+            annotationIds
+                .map((id) => getStrId(id))
+                .filter((id) => {
+                    // 存在する矩形だけ対象とする
+                    return this.currentSquares.some((square) => square.id === id);
+                })
+                .forEach((id) => {
+                    if (!AnnotationContext.lockAnnotationIds.some((i) => i === id)) {
+                        AnnotationContext.lockAnnotationIds.push(id);
+                    }
+                });
+        }
+
         this.setAllSquaresStyle();
     }
 

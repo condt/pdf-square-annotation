@@ -8,7 +8,6 @@ import { AppQueryParameters } from "./utils/parameters.js";
 
 import type { ExportData } from "./square-annotation/types/square.js";
 import type { AppConfigType } from "./types/app-config.js";
-import { LockAnnotationsArgs } from "./types/lock.js";
 import { changeUndoRedoButtonStyle } from "./square-annotation/style/toolbar.js";
 
 Context.params = new AppQueryParameters();
@@ -75,8 +74,8 @@ window.importAnnotations = async () => {
 /**
  * 指定したアノテーションをlock状態にする
  */
-window.lockAnnotations = (args: LockAnnotationsArgs) => {
-    Context.squareAnnotation.lockAnnotations(args);
+window.lockAnnotations = (annotationIds: number[], overwrite: boolean = false) => {
+    Context.squareAnnotation.lockAnnotations(annotationIds, overwrite);
 };
 
 /**
