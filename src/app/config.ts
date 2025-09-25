@@ -49,7 +49,12 @@ export class AppConfig {
         return this.config;
     }
 
-    setConfig(config: AppConfigType) {
+    /**
+     * アプリ設定を更新する
+     * @param config 設定
+     * @param draw trueなら描画する
+     */
+    setConfig(config: AppConfigType, draw = true) {
         // 設定を更新
         this.mergeConfig(config);
 
@@ -59,11 +64,13 @@ export class AppConfig {
             importButton: this.config.toolbar.importButton,
         });
 
-        // 矩形のスタイルを反映する
-        Context.squareAnnotation.setAllSquaresStyle();
+        if (draw) {
+            // 矩形のスタイルを反映する
+            Context.squareAnnotation.setAllSquaresStyle();
 
-        // resize handlerのスタイルを反映する
-        Context.squareAnnotation.setResizeHandlerStyle();
+            // resize handlerのスタイルを反映する
+            Context.squareAnnotation.setResizeHandlerStyle();
+        }
     }
 
     /**

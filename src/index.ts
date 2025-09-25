@@ -17,8 +17,8 @@ Context.app = new App();
 /**
  * API: PDFの読み込むが完了したらPromiseが完了する
  */
-window.openPdf = async (data: Blob | string) => {
-    return await Context.app.open(data);
+window.openPdf = async (data: Blob | string, config?: AppConfigType) => {
+    return await Context.app.open(data, config);
 };
 
 /**

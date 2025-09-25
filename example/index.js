@@ -11,15 +11,17 @@ const getPDFUrl = () => {
 window.init = async () => {
     const iframe = document.getElementById("pdfjs");
 
-    // set config (optional)
-    // iframe.contentWindow.setAppConfig(config);
-
     // fetch PDF
     const response = await fetch(getPDFUrl());
     const bin = await response.blob();
 
-    // open PDF
-    await iframe.contentWindow.openPdf(bin);
+    // open PDF (config is optional)
+    await iframe.contentWindow.openPdf(bin, {
+        toolbar: {
+            exportButton: true,
+            importButton: true,
+        },
+    });
 };
 
 // 作成・削除時に発火するイベント
@@ -85,8 +87,8 @@ window.showCurrentSquares = () => {
 
 const config = {
     toolbar: {
-        exportButton: true,
-        importButton: true,
+        exportButton: false,
+        importButton: false,
     },
     squareAnnotation: {
         normalStyle: {

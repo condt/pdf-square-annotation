@@ -17,7 +17,7 @@ declare global {
      * ## PDFファイルを開く
      * @returns 読み込みが完了したら解決する
      */
-    function openPdf(data: Blob | string): Promise<void>;
+    function openPdf(data: Blob | string, config?: AppConfigType): Promise<void>;
 
     /**
      * 編集モードにする

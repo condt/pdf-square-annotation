@@ -1,11 +1,13 @@
+import { AppConfigType } from "@/types/app-config.js";
 import { Task } from "../utils/task.js";
+import { Context } from "@/utils/context.js";
 
 export class App {
     private openState = new Task<void>();
 
     constructor() {}
 
-    async open(data: Blob | string) {
+    async open(data: Blob | string, config?: AppConfigType) {
         const iframe = <HTMLIFrameElement>document.createElement("iframe");
         iframe.id = "pdfjs";
         iframe.width = "100%";
@@ -25,7 +27,12 @@ export class App {
         container.appendChild(iframe);
 
         // 初期化完了まで待つ
-        return await this.openState.wait();
+        await this.openState.wait();
+
+        if (config != null) {
+            // configが渡されていたら更新する(描画はしない)
+            Context.config.setConfig(config, false);
+        }
     }
 
     /**
